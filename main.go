@@ -19,6 +19,8 @@ import (
 	"bufio"
 	"strings"
 	"github.com/Songmu/axslogparser"
+	"github.com/gocolly/colly"
+	"fmt"
 )
 
 func loadLogFile(filePath string, handler func(string)) error {
@@ -52,6 +54,30 @@ func printApacheLog(l *axslogparser.Log) {
 	println(l.Host, l.Time.String(), l.Request, l.Status, l.Referer, l.UserAgent, l.RequestURI, l.Method)
 }
 
+func crawl(targetBase string) {
+	c := colly.NewCollector()
+
+	// Find and visit all links
+	c.OnHTML("a[href]", func(e *colly.HTMLElement) {
+		if !strings.HasPrefix(e.Attr("href"), "http") {
+			println("[" + e.Attr("href") + "] --> ok")
+			e.Request.Visit(e.Attr("href"))
+		} else {
+			println("[" + e.Attr("href") + "] ---> deny")
+		}
+	})
+
+	c.OnRequest(func(r *colly.Request) {
+		fmt.Println("Visit page: ", r.URL.Path)
+	})
+
+	c.Visit(targetBase)
+}
+
 func main() {
-	loadLogFile("log/raith.log", apacheLogHandler)
+	targetBase := "http://127.0.0.1:5000/"
+
+	// loadLogFile("log/raith.log", apacheLogHandler)
+
+	crawl(targetBase)
 }
