@@ -87,6 +87,7 @@ func (p Page) addLink(path string) {
 type Node struct {
 	Id    string `json:"id"`
 	Group int    `json:"group"`
+	Size  int    `json:"size"`
 }
 
 type Link struct {
@@ -95,10 +96,11 @@ type Link struct {
 	Value  int    `json:"value"`
 }
 
-func newNode(id string, group int) Node {
+func newNode(id string, group int, size int) Node {
 	n := Node{}
 	n.Id = id
 	n.Group = group
+	n.Size = size
 	return n
 }
 
@@ -153,7 +155,11 @@ func generateJson() {
 	g.Links = make([]Link, 0)
 
 	for _, page := range pageMap {
-		g.Nodes = append(g.Nodes, newNode(page.name, 0))
+		if page.name == "/" {
+			g.Nodes = append(g.Nodes, newNode(page.name, 0, 20))
+		} else {
+			g.Nodes = append(g.Nodes, newNode(page.name, 0, 10))
+		}
 
 		for target, weight := range page.links {
 			g.Links = append(g.Links, newLink(page.name, target.name, weight))
