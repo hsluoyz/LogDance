@@ -74,11 +74,18 @@ func crawl(targetBase string) {
 	c.OnHTML("a[href]", func(e *colly.HTMLElement) {
 		source := e.Request.URL.Path
 		target := e.Attr("href")
-		if !strings.HasPrefix(target, "http") {
-			fmt.Printf("New link: [%s] --> [%s]: ok\n", source, target)
+
+		status := "ok"
+		if strings.HasPrefix(target, "http") {
+			status = "out of scope"
+		} else if _, ok := pageMap[target]; ok {
+			status = "already done"
+		}
+
+		fmt.Printf("New link: [%s] --> [%s]: %s\n", source, target, status)
+
+		if status == "ok" {
 			e.Request.Visit(e.Attr("href"))
-		} else {
-			fmt.Printf("New link: [%s] --> [%s]: deny\n", source, target)
 		}
 	})
 
