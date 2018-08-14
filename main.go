@@ -21,6 +21,8 @@ import (
 	"github.com/Songmu/axslogparser"
 	"github.com/gocolly/colly"
 	"fmt"
+	"encoding/json"
+	"io/ioutil"
 )
 
 func loadLogFile(filePath string, handler func(string)) error {
@@ -82,6 +84,37 @@ func (p Page) addLink(path string) {
 	}
 }
 
+type Node struct {
+	Id    string `json:"id"`
+	Group int    `json:"group"`
+}
+
+type Link struct {
+	Source string `json:"source"`
+	Target string `json:"target"`
+	Value  int    `json:"value"`
+}
+
+func newNode(id string, group int) Node {
+	n := Node{}
+	n.Id = id
+	n.Group = group
+	return n
+}
+
+func newLink(source string, target string, value int) Link {
+	l := Link{}
+	l.Source = source
+	l.Target = target
+	l.Value = value
+	return l
+}
+
+type Graph struct {
+	Nodes []Node `json:"nodes"`
+	Links []Link `json:"links"`
+}
+
 func crawl(targetBase string) {
 	pageMap["/"] = newPage("/")
 	c := colly.NewCollector()
@@ -114,11 +147,34 @@ func crawl(targetBase string) {
 	c.Visit(targetBase)
 }
 
+func generateJson() {
+	g := Graph{}
+	g.Nodes = make([]Node, 0)
+	g.Links = make([]Link, 0)
+
+	for _, page := range pageMap {
+		g.Nodes = append(g.Nodes, newNode(page.name, 0))
+
+		for target, weight := range page.links {
+			g.Links = append(g.Links, newLink(page.name, target.name, weight))
+		}
+	}
+
+	if data, err := json.MarshalIndent(g, "", "  "); err == nil {
+		fmt.Printf("%s\n", data)
+
+		err := ioutil.WriteFile("webgraph.json", data, os.ModePerm)
+		if err != nil {
+			panic(err)
+		}
+	}
+}
+
 func main() {
 	targetBase := "http://127.0.0.1:5000/"
 
 	// loadLogFile("log/raith.log", apacheLogHandler)
 
 	crawl(targetBase)
-	print(pageMap)
+	generateJson()
 }

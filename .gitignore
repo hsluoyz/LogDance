@@ -13,3 +13,6 @@
 
 .idea/
 *.iml
+
+webgraph.json
+*.log
