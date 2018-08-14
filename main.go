@@ -68,6 +68,7 @@ func newPage(name string) Page {
 	p := Page{}
 	p.name = name
 	p.links = make(map[string]int)
+	fmt.Println("New page: ", name)
 	return p
 }
 
@@ -125,6 +126,12 @@ func crawl(targetBase string) {
 	c.OnHTML("a[href]", func(e *colly.HTMLElement) {
 		source := e.Request.URL.Path
 		target := e.Attr("href")
+		if source != "/" {
+			source = strings.TrimSuffix(source, "/")
+		}
+		if target != "/" {
+			target = strings.TrimSuffix(target, "/")
+		}
 
 		if strings.HasPrefix(target, "http") {
 			return
@@ -139,9 +146,8 @@ func crawl(targetBase string) {
 
 		if _, ok := pageMap[tPattern]; ok {
 			status = "already done"
-		} else {
-			pageMap[sPattern].addLink(tPattern)
 		}
+		pageMap[sPattern].addLink(tPattern)
 
 		fmt.Printf("New link: [%s] --> [%s]: %s\n", sPattern, tPattern, status)
 
@@ -151,7 +157,6 @@ func crawl(targetBase string) {
 	})
 
 	c.OnRequest(func(r *colly.Request) {
-		fmt.Println("New page: ", r.URL.Path)
 	})
 
 	c.Visit(targetBase)
