@@ -56,18 +56,34 @@ func printApacheLog(l *axslogparser.Log) {
 
 type Page struct {
 	name string
-	links []*Page
+	links map[*Page]int
 }
 
 var pageMap = map[string]Page {}
 
 func newPage(name string) Page {
-	page := Page{}
-	page.name = name
-	return page
+	p := Page{}
+	p.name = name
+	p.links = make(map[*Page]int)
+	return p
+}
+
+func (p Page) addLink(path string) {
+	_, ok := pageMap[path]
+	if !ok {
+		pageMap[path] = newPage(path)
+	}
+
+	page := pageMap[path]
+	if _, ok := p.links[&page]; ok {
+		p.links[&page] ++
+	} else {
+		p.links[&page] = 1
+	}
 }
 
 func crawl(targetBase string) {
+	pageMap["/"] = newPage("/")
 	c := colly.NewCollector()
 
 	// Find and visit all links
@@ -80,6 +96,8 @@ func crawl(targetBase string) {
 			status = "out of scope"
 		} else if _, ok := pageMap[target]; ok {
 			status = "already done"
+		} else {
+			pageMap[source].addLink(target)
 		}
 
 		fmt.Printf("New link: [%s] --> [%s]: %s\n", source, target, status)
@@ -91,11 +109,6 @@ func crawl(targetBase string) {
 
 	c.OnRequest(func(r *colly.Request) {
 		fmt.Println("New page: ", r.URL.Path)
-
-		_, ok := pageMap[r.URL.Path]
-		if !ok {
-			pageMap[r.URL.Path] = newPage(r.URL.Path)
-		}
 	})
 
 	c.Visit(targetBase)
