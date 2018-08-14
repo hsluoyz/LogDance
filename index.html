@@ -33,6 +33,21 @@
         .force("charge", d3.forceManyBody().strength(-5000))
         .force("center", d3.forceCenter(width / 2, height / 2));
 
+    svg.append("svg:defs").selectAll("marker")
+            .data(["end"])      // Different link/path types can be defined here
+            .enter().append("svg:marker")    // This section adds in the arrows
+            .attr("id", String)
+            .attr("viewBox", "0 -5 10 10")
+            .attr("refX", 20)
+            .attr("refY", 0.5)
+            .attr("markerWidth", 5)
+            .attr("markerHeight", 5)
+            .attr("orient", "auto")
+            .style("stroke-width", 1)
+            .append("svg:path")
+            .attr("d", "M0,-5L10,0L0,5 L10,0 L0, -5")
+            .style("stroke", "#999");
+
     d3.json("webgraph.json", function(error, graph) {
         if (error) throw error;
 
@@ -41,11 +56,8 @@
             .selectAll("line")
             .data(graph.links)
             .enter().append("line")
-            .attr("stroke-width", function(d) { return d.value; })
-            .style("stroke",function(d) {
-                if (d.value == 5) return "#2CA02C"
-                else return "#888888"; //  color
-            });
+            .attr("stroke-width", function(d) { return 2; })
+            .attr("marker-end", "url(#end)");
 
         var node = svg.append("g")
             .attr("class", "nodes")
@@ -65,8 +77,8 @@
             .text(function(d) {
                 return d.id;
             })
-            .attr('x', 6)
-            .attr('y', 3);
+            .attr('x', 15)
+            .attr('y', 10);
 
         node.append("title")
             .text(function(d) { return d.id; });
