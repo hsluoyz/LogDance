@@ -23,6 +23,7 @@ import (
 	"fmt"
 	"encoding/json"
 	"io/ioutil"
+	"regexp"
 )
 
 func loadLogFile(filePath string, handler func(string)) error {
@@ -58,7 +59,7 @@ func printApacheLog(l *axslogparser.Log) {
 
 type Page struct {
 	name string
-	links map[*Page]int
+	links map[string]int
 }
 
 var pageMap = map[string]Page {}
@@ -66,21 +67,24 @@ var pageMap = map[string]Page {}
 func newPage(name string) Page {
 	p := Page{}
 	p.name = name
-	p.links = make(map[*Page]int)
+	p.links = make(map[string]int)
 	return p
 }
 
 func (p Page) addLink(path string) {
+	if p.name == path {
+		return
+	}
+
 	_, ok := pageMap[path]
 	if !ok {
 		pageMap[path] = newPage(path)
 	}
 
-	page := pageMap[path]
-	if _, ok := p.links[&page]; ok {
-		p.links[&page] ++
+	if _, ok := p.links[path]; ok {
+		p.links[path] ++
 	} else {
-		p.links[&page] = 1
+		p.links[path] = 1
 	}
 }
 
@@ -132,7 +136,7 @@ func crawl(targetBase string) {
 		} else if _, ok := pageMap[target]; ok {
 			status = "already done"
 		} else {
-			pageMap[source].addLink(target)
+			pageMap[getPattern(source)].addLink(getPattern(target))
 		}
 
 		fmt.Printf("New link: [%s] --> [%s]: %s\n", source, target, status)
@@ -161,8 +165,8 @@ func generateJson() {
 			g.Nodes = append(g.Nodes, newNode(page.name, 0, 10))
 		}
 
-		for target, weight := range page.links {
-			g.Links = append(g.Links, newLink(page.name, target.name, weight))
+		for target, _ := range page.links {
+			g.Links = append(g.Links, newLink(page.name, target, 1))
 		}
 	}
 
@@ -176,7 +180,32 @@ func generateJson() {
 	}
 }
 
+//func getPattern(path string) {
+//	re, _ := regexp.Compile("(tag/)[^/]*(.*)")
+//	path = re.ReplaceAllString(path, "$1[^/]*$2")
+//
+//	re, _ = regexp.Compile("(page/)[^/]*(.*)")
+//	path = re.ReplaceAllString(path, "$1[^/]*$2")
+//
+//	print(path)
+//}
+
+func getPattern(path string) string {
+	re, _ := regexp.Compile("(tag/)[^/]*(.*)")
+	path = re.ReplaceAllString(path, "$1*$2")
+
+	re, _ = regexp.Compile("(page/)[^/]*(.*)")
+	path = re.ReplaceAllString(path, "$1*$2")
+
+	re, _ = regexp.Compile("(author/)[^/]*(.*)")
+	path = re.ReplaceAllString(path, "$1*$2")
+
+	return path
+}
+
 func main() {
+	// getPattern("/tag/change/page/1/")
+
 	targetBase := "http://127.0.0.1:5000/"
 
 	// loadLogFile("log/raith.log", apacheLogHandler)
