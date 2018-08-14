@@ -72,10 +72,6 @@ func newPage(name string) Page {
 }
 
 func (p Page) addLink(path string) {
-	if p.name == path {
-		return
-	}
-
 	_, ok := pageMap[path]
 	if !ok {
 		pageMap[path] = newPage(path)
@@ -130,16 +126,24 @@ func crawl(targetBase string) {
 		source := e.Request.URL.Path
 		target := e.Attr("href")
 
-		status := "ok"
 		if strings.HasPrefix(target, "http") {
-			status = "out of scope"
-		} else if _, ok := pageMap[target]; ok {
-			status = "already done"
-		} else {
-			pageMap[getPattern(source)].addLink(getPattern(target))
+			return
 		}
 
-		fmt.Printf("New link: [%s] --> [%s]: %s\n", source, target, status)
+		status := "ok"
+		sPattern := getPattern(source)
+		tPattern := getPattern(target)
+		if sPattern == tPattern {
+			return
+		}
+
+		if _, ok := pageMap[tPattern]; ok {
+			status = "already done"
+		} else {
+			pageMap[sPattern].addLink(tPattern)
+		}
+
+		fmt.Printf("New link: [%s] --> [%s]: %s\n", sPattern, tPattern, status)
 
 		if status == "ok" {
 			e.Request.Visit(e.Attr("href"))
