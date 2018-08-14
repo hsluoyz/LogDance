@@ -54,21 +54,41 @@ func printApacheLog(l *axslogparser.Log) {
 	println(l.Host, l.Time.String(), l.Request, l.Status, l.Referer, l.UserAgent, l.RequestURI, l.Method)
 }
 
+type Page struct {
+	name string
+	links []*Page
+}
+
+var pageMap = map[string]Page {}
+
+func newPage(name string) Page {
+	page := Page{}
+	page.name = name
+	return page
+}
+
 func crawl(targetBase string) {
 	c := colly.NewCollector()
 
 	// Find and visit all links
 	c.OnHTML("a[href]", func(e *colly.HTMLElement) {
-		if !strings.HasPrefix(e.Attr("href"), "http") {
-			println("[" + e.Attr("href") + "] --> ok")
+		source := e.Request.URL.Path
+		target := e.Attr("href")
+		if !strings.HasPrefix(target, "http") {
+			fmt.Printf("New link: [%s] --> [%s]: ok\n", source, target)
 			e.Request.Visit(e.Attr("href"))
 		} else {
-			println("[" + e.Attr("href") + "] ---> deny")
+			fmt.Printf("New link: [%s] --> [%s]: deny\n", source, target)
 		}
 	})
 
 	c.OnRequest(func(r *colly.Request) {
-		fmt.Println("Visit page: ", r.URL.Path)
+		fmt.Println("New page: ", r.URL.Path)
+
+		_, ok := pageMap[r.URL.Path]
+		if !ok {
+			pageMap[r.URL.Path] = newPage(r.URL.Path)
+		}
 	})
 
 	c.Visit(targetBase)
@@ -80,4 +100,5 @@ func main() {
 	// loadLogFile("log/raith.log", apacheLogHandler)
 
 	crawl(targetBase)
+	print(pageMap)
 }
