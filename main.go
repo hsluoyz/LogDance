@@ -126,6 +126,9 @@ func crawl(targetBase string) {
 	c.OnHTML("a[href]", func(e *colly.HTMLElement) {
 		source := e.Request.URL.Path
 		target := e.Attr("href")
+		if e.Request.URL.RawQuery != "" {
+			source += "?" + e.Request.URL.RawQuery
+		}
 		if source != "/" {
 			source = strings.TrimSuffix(source, "/")
 		}
@@ -200,13 +203,19 @@ func generateJson() {
 //}
 
 func getPattern(path string) string {
-	re, _ := regexp.Compile("(tag/)[^/]*(.*)")
-	path = re.ReplaceAllString(path, "$1*$2")
+	//re, _ := regexp.Compile("(tag/)[^/]*(.*)")
+	//path = re.ReplaceAllString(path, "$1*$2")
+	//
+	//re, _ = regexp.Compile("(page/)[^/]*(.*)")
+	//path = re.ReplaceAllString(path, "$1*$2")
+	//
+	//re, _ = regexp.Compile("(author/)[^/]*(.*)")
+	//path = re.ReplaceAllString(path, "$1*$2")
 
-	re, _ = regexp.Compile("(page/)[^/]*(.*)")
-	path = re.ReplaceAllString(path, "$1*$2")
+	//re, _ := regexp.Compile("(products/)[^/]*(.*)")
+	//path = re.ReplaceAllString(path, "$1*$2")
 
-	re, _ = regexp.Compile("(author/)[^/]*(.*)")
+	re, _ := regexp.Compile("(.*=)[^=&]*(.*)")
 	path = re.ReplaceAllString(path, "$1*$2")
 
 	return path
