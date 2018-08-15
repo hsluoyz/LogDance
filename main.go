@@ -203,8 +203,9 @@ func generateJson() {
 //}
 
 func getPattern(path string) string {
-	//re, _ := regexp.Compile("(tag/)[^/]*(.*)")
-	//path = re.ReplaceAllString(path, "$1*$2")
+	re, _ := regexp.Compile("(tag/)[^/]*(.*)")
+	path = re.ReplaceAllString(path, "$1*$2")
+
 	//
 	//re, _ = regexp.Compile("(page/)[^/]*(.*)")
 	//path = re.ReplaceAllString(path, "$1*$2")
@@ -215,8 +216,11 @@ func getPattern(path string) string {
 	//re, _ := regexp.Compile("(products/)[^/]*(.*)")
 	//path = re.ReplaceAllString(path, "$1*$2")
 
-	re, _ := regexp.Compile("(.*=)[^=&]*(.*)")
-	path = re.ReplaceAllString(path, "$1*$2")
+	//re, _ := regexp.Compile("(.*=)[^=&]*(.*)")
+	//path = re.ReplaceAllString(path, "$1*$2")
+
+	re, _ = regexp.Compile("#.*")
+	path = re.ReplaceAllString(path, "")
 
 	return path
 }
@@ -224,7 +228,7 @@ func getPattern(path string) string {
 func main() {
 	// getPattern("/tag/change/page/1/")
 
-	targetBase := "http://127.0.0.1:5000/"
+	targetBase := "http://127.0.0.1:4000/"
 
 	// loadLogFile("log/raith.log", apacheLogHandler)
 
