@@ -208,7 +208,13 @@ func generateJson() {
 //}
 
 func getPattern(path string) string {
-	re, _ := regexp.Compile("(tag/)[^/]*(.*)")
+	// "/page#tag" -> "/page"
+	// "/page/#tag" -> "/page"
+	re, _ := regexp.Compile("/?#.*")
+	path = re.ReplaceAllString(path, "")
+
+	// "/tag/5" -> "/tag/*"
+	re, _ = regexp.Compile("(tag/)[^/]*(.*)")
 	path = re.ReplaceAllString(path, "$1*$2")
 
 	//// "/page/5" -> "/page/*"
@@ -226,11 +232,6 @@ func getPattern(path string) string {
 	//// "/query?id=123" -> "/query?id=*"
 	//re, _ := regexp.Compile("(.*=)[^=&]*(.*)")
 	//path = re.ReplaceAllString(path, "$1*$2")
-
-	// "/page#tag" -> "/page"
-	// "/page/#tag" -> "/page"
-	re, _ = regexp.Compile("/?#.*")
-	path = re.ReplaceAllString(path, "")
 
 	// "/page5" -> "/page*"
 	re, _ = regexp.Compile("(page)[^/]*(.*)")
