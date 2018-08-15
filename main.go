@@ -147,6 +147,10 @@ func crawl(targetBase string) {
 		if sPattern == tPattern {
 			return
 		}
+		// Do not handle the main page again by recognizing "index.htm".
+		if strings.HasPrefix(tPattern, "/index.htm") {
+			return
+		}
 
 		if _, ok := pageMap[tPattern]; ok {
 			status = "already done"
@@ -226,6 +230,14 @@ func getPattern(path string) string {
 	// "/page#tag" -> "/page"
 	re, _ = regexp.Compile("#.*")
 	path = re.ReplaceAllString(path, "")
+
+	// "/page5" -> "/page*"
+	re, _ = regexp.Compile("(page)[^/]*(.*)")
+	path = re.ReplaceAllString(path, "$1*$2")
+
+	// "/2018/01/02/the-blog-title" -> "/xxxx/xx/xx/xx"
+	re, _ = regexp.Compile("(.*)\\d{4}/\\d{2}/\\d{2}/(.*)")
+	path = re.ReplaceAllString(path, "$1xxxx/xx/xx/xx")
 
 	return path
 }
