@@ -228,7 +228,8 @@ func getPattern(path string) string {
 	//path = re.ReplaceAllString(path, "$1*$2")
 
 	// "/page#tag" -> "/page"
-	re, _ = regexp.Compile("#.*")
+	// "/page/#tag" -> "/page"
+	re, _ = regexp.Compile("/?#.*")
 	path = re.ReplaceAllString(path, "")
 
 	// "/page5" -> "/page*"
