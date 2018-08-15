@@ -136,7 +136,8 @@ func crawl(targetBase string) {
 			target = strings.TrimSuffix(target, "/")
 		}
 
-		if strings.HasPrefix(target, "http") {
+		// Targets like "http://xxx.com", "mailto:xxx@xxx.com", "#tag" will be ignored.
+		if !strings.HasPrefix(target, "/") {
 			return
 		}
 
