@@ -119,6 +119,7 @@ type Graph struct {
 }
 
 func crawl(targetBase string) {
+	domain := getDomainName(targetBase)
 	pageMap["/"] = newPage("/")
 	c := colly.NewCollector()
 
@@ -129,6 +130,12 @@ func crawl(targetBase string) {
 		if e.Request.URL.RawQuery != "" {
 			source += "?" + e.Request.URL.RawQuery
 		}
+
+		if source == "" {
+			source = "/"
+		}
+		target = formatPath(target, domain)
+
 		if source != "/" {
 			source = strings.TrimSuffix(source, "/")
 		}
@@ -244,10 +251,44 @@ func getPattern(path string) string {
 	return path
 }
 
+func getDomainName(url string) string {
+	re, _ := regexp.Compile("[^.]*\\.(com|net|org)")
+	url = re.FindString(url)
+	return url
+}
+
+func getSubDomain(url string, domain string) string {
+	if i := strings.Index(url, domain); i != -1 {
+		url = url[:i]
+		re, _ := regexp.Compile("/[^./]*\\.")
+		url = re.FindString(url)
+		if url == "" {
+			return ""
+		} else {
+			return url[1:len(url) - 1]
+		}
+	} else {
+		return ""
+	}
+}
+
+func formatPath(url string, domain string) string {
+	if i := strings.Index(url, domain); i != -1 {
+		subDomain := getSubDomain(url, domain)
+		if subDomain == "" || subDomain == "www" {
+			return url[i + len(domain):]
+		} else {
+			return strings.TrimLeft(url, "/")
+		}
+	} else {
+		return url
+	}
+}
+
 func main() {
 	// getPattern("/tag/change/page/1/")
 
-	targetBase := "http://127.0.0.1:4000/"
+	targetBase := "https://www.yohobuy.com/"
 
 	// loadLogFile("log/raith.log", apacheLogHandler)
 
