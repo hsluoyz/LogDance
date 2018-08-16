@@ -241,10 +241,10 @@ func getPattern(path string) string {
 	//// "/products/abc" -> "/products/*"
 	//re, _ := regexp.Compile("(products/)[^/]*(.*)")
 	//path = re.ReplaceAllString(path, "$1*$2")
-	//
-	//// "/query?id=123" -> "/query?id=*"
-	//re, _ := regexp.Compile("(.*=)[^=&]*(.*)")
-	//path = re.ReplaceAllString(path, "$1*$2")
+
+	// "/query?id=123" -> "/query?id=*"
+	re, _ = regexp.Compile("=[^&=]*")
+	path = re.ReplaceAllString(path, "=*")
 
 	// "/page5" -> "/page*"
 	re, _ = regexp.Compile("(page)[^/]*(.*)")
