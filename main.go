@@ -226,14 +226,6 @@ func getPattern(path string) string {
 	re, _ := regexp.Compile("/?#.*")
 	path = re.ReplaceAllString(path, "")
 
-	// "/tag/5" -> "/tag/*"
-	re, _ = regexp.Compile("(tag/)[^/]*(.*)")
-	path = re.ReplaceAllString(path, "$1*$2")
-
-	//// "/page/5" -> "/page/*"
-	//re, _ = regexp.Compile("(page/)[^/]*(.*)")
-	//path = re.ReplaceAllString(path, "$1*$2")
-	//
 	//// "/author/alice" -> "/author/*"
 	//re, _ = regexp.Compile("(author/)[^/]*(.*)")
 	//path = re.ReplaceAllString(path, "$1*$2")
@@ -247,8 +239,8 @@ func getPattern(path string) string {
 	path = re.ReplaceAllString(path, "=*")
 
 	// "/page5" -> "/page*"
-	re, _ = regexp.Compile("(page)[^/]*(.*)")
-	path = re.ReplaceAllString(path, "$1*$2")
+	re, _ = regexp.Compile("[0-9]+")
+	path = re.ReplaceAllString(path, "*")
 
 	// "/2018/01/02/the-blog-title" -> "/xxxx/xx/xx/xx"
 	re, _ = regexp.Compile("(.*)\\d{4}/\\d{2}/\\d{2}/(.*)")
