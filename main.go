@@ -127,18 +127,23 @@ func crawl(targetBase string) {
 	c.OnHTML("a[href]", func(e *colly.HTMLElement) {
 		source := e.Request.URL.Path
 		target := e.Attr("href")
-		if e.Request.URL.RawQuery != "" {
-			source += "?" + e.Request.URL.RawQuery
+
+		if origin := e.Request.Ctx.Get("origin"); origin != "" {
+			source = origin
+		} else {
+			if e.Request.URL.RawQuery != "" {
+				source += "?" + e.Request.URL.RawQuery
+			}
+			if source == "" {
+				source = "/"
+			}
+			if source != "/" {
+				source = strings.TrimSuffix(source, "/")
+			}
 		}
 
-		if source == "" {
-			source = "/"
-		}
 		target = formatPath(target, domain)
 
-		if source != "/" {
-			source = strings.TrimSuffix(source, "/")
-		}
 		if target != "/" {
 			target = strings.TrimSuffix(target, "/")
 		}
@@ -167,6 +172,7 @@ func crawl(targetBase string) {
 		fmt.Printf("New link: [%s] --> [%s]: %s\n", sPattern, tPattern, status)
 
 		if status == "ok" {
+			e.Request.Ctx.Put("origin", tPattern)
 			e.Request.Visit(e.Attr("href"))
 		}
 	})
