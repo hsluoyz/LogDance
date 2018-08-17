@@ -33,7 +33,8 @@ func TestGetPattern(t *testing.T) {
 
 	testGetPattern(t, "/query?id=123", "/query?id=*")
 
-	testGetPattern(t, "/lifestyle-sale/vip/gd2.html?saleType=2&channel=lifestyle&order=s_t_desc&price=0,149&sort=2", "/lifestyle-sale/vip/gd*.html?saleType=*&channel=*&order=*&price=*&sort=*")
+	testGetPattern(t, "/lifestyle-sale/vip/gd2.html?saleType=2&channel=lifestyle&order=s_t_desc&price=0,149&sort=2", "/lifestyle-sale/vip/*.html?saleType=*&channel=*&order=*&price=*&sort=*")
+	testGetPattern(t, "/lifestyle-sale/vip/bd1-gd2.html", "/lifestyle-sale/vip/*.html")
 }
 
 func testGetDomainName(t *testing.T, url string, res string) {

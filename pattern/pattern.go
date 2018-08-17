@@ -24,6 +24,8 @@ var customRe *regexp.Regexp
 
 func init() {
 	keyStore = make(map[string][]string)
+
+	keyStore["yohobuy.com"] = []string{"shop", "tags"}
 }
 
 func GetPattern(path string) string {
@@ -43,6 +45,10 @@ func GetPattern(path string) string {
 	if customRe != nil {
 		path = customRe.ReplaceAllString(path, "$1/*$2")
 	}
+
+	// "/products/abc.html" -> "/products/*.html"
+	re, _ = regexp.Compile("(.*/)[^./]*(.html.*)")
+	path = re.ReplaceAllString(path, "$1*$2")
 
 	// "/query?id=123" -> "/query?id=*"
 	re, _ = regexp.Compile("=[^&=]*")
