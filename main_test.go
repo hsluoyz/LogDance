@@ -4,11 +4,11 @@ import "testing"
 
 func testGetPattern(t *testing.T, path string, res string) {
 	t.Helper()
-	myRes := getPattern(path)
-	t.Logf("getPattern(%s) = %s", path, myRes)
+	myRes := GetPattern(path)
+	t.Logf("GetPattern(%s) = %s", path, myRes)
 
 	if myRes != res {
-		t.Errorf("getPattern(%s) = %s, supposed to be %s", path, myRes, res)
+		t.Errorf("GetPattern(%s) = %s, supposed to be %s", path, myRes, res)
 	}
 }
 
@@ -26,11 +26,11 @@ func TestGetPattern(t *testing.T) {
 
 func testGetDomainName(t *testing.T, url string, res string) {
 	t.Helper()
-	myRes := getDomainName(url)
-	t.Logf("getDomainName(%s) = %s", url, myRes)
+	myRes := GetDomainName(url)
+	t.Logf("GetDomainName(%s) = %s", url, myRes)
 
 	if myRes != res {
-		t.Errorf("getDomainName(%s) = %s, supposed to be %s", url, myRes, res)
+		t.Errorf("GetDomainName(%s) = %s, supposed to be %s", url, myRes, res)
 	}
 }
 
@@ -40,7 +40,7 @@ func TestGetDomainName(t *testing.T) {
 
 func testFormatPath(t *testing.T, url string, domain string, res string) {
 	t.Helper()
-	myRes := formatPath(url, domain)
+	myRes := FormatPath(url, domain)
 	t.Logf("getPathFromFullUrl(%s) = %s", url, myRes)
 
 	if myRes != res {

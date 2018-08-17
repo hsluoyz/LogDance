@@ -119,7 +119,7 @@ type Graph struct {
 }
 
 func crawl(targetBase string) {
-	domain := getDomainName(targetBase)
+	domain := GetDomainName(targetBase)
 	pageMap["/"] = newPage("/")
 	c := colly.NewCollector()
 
@@ -142,7 +142,7 @@ func crawl(targetBase string) {
 			}
 		}
 
-		target = formatPath(target, domain)
+		target = FormatPath(target, domain)
 
 		if target != "/" {
 			target = strings.TrimSuffix(target, "/")
@@ -154,8 +154,8 @@ func crawl(targetBase string) {
 		}
 
 		status := "ok"
-		sPattern := getPattern(source)
-		tPattern := getPattern(target)
+		sPattern := GetPattern(source)
+		tPattern := GetPattern(target)
 		if sPattern == tPattern {
 			return
 		}
@@ -210,17 +210,7 @@ func generateJson() {
 	}
 }
 
-//func getPattern(path string) {
-//	re, _ := regexp.Compile("(tag/)[^/]*(.*)")
-//	path = re.ReplaceAllString(path, "$1[^/]*$2")
-//
-//	re, _ = regexp.Compile("(page/)[^/]*(.*)")
-//	path = re.ReplaceAllString(path, "$1[^/]*$2")
-//
-//	print(path)
-//}
-
-func getPattern(path string) string {
+func GetPattern(path string) string {
 	// "/page#tag" -> "/page"
 	// "/page/#tag" -> "/page"
 	re, _ := regexp.Compile("/?#.*")
@@ -249,13 +239,13 @@ func getPattern(path string) string {
 	return path
 }
 
-func getDomainName(url string) string {
+func GetDomainName(url string) string {
 	re, _ := regexp.Compile("[^.]*\\.(com|net|org)")
 	url = re.FindString(url)
 	return url
 }
 
-func getSubDomain(url string, domain string) string {
+func GetSubDomain(url string, domain string) string {
 	if i := strings.Index(url, domain); i != -1 {
 		url = url[:i]
 		re, _ := regexp.Compile("/[^./]*\\.")
@@ -270,9 +260,9 @@ func getSubDomain(url string, domain string) string {
 	}
 }
 
-func formatPath(url string, domain string) string {
+func FormatPath(url string, domain string) string {
 	if i := strings.Index(url, domain); i != -1 {
-		subDomain := getSubDomain(url, domain)
+		subDomain := GetSubDomain(url, domain)
 		if subDomain == "" || subDomain == "www" {
 			return url[i + len(domain):]
 		} else {
@@ -284,7 +274,7 @@ func formatPath(url string, domain string) string {
 }
 
 func main() {
-	// getPattern("/tag/change/page/1/")
+	// GetPattern("/tag/change/page/1/")
 
 	targetBase := "https://www.yohobuy.com/"
 
