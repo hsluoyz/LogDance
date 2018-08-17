@@ -19,6 +19,13 @@ import (
 	"strings"
 )
 
+var keyStore map[string][]string
+var customRe *regexp.Regexp
+
+func init() {
+	keyStore = make(map[string][]string)
+}
+
 func GetPattern(path string) string {
 	// "/page#tag" -> "/page"
 	// "/page/#tag" -> "/page"
@@ -32,6 +39,10 @@ func GetPattern(path string) string {
 	//// "/products/abc" -> "/products/*"
 	//re, _ := regexp.Compile("(products/)[^/]*(.*)")
 	//path = re.ReplaceAllString(path, "$1*$2")
+
+	if customRe != nil {
+		path = customRe.ReplaceAllString(path, "$1/*$2")
+	}
 
 	// "/query?id=123" -> "/query?id=*"
 	re, _ = regexp.Compile("=[^&=]*")
@@ -79,5 +90,14 @@ func FormatPath(url string, domain string) string {
 		}
 	} else {
 		return url
+	}
+}
+
+func GenerateCustomRe(domain string) {
+	if keys, ok := keyStore[domain]; ok {
+		expr := "(" + strings.Join(keys, "|") + ")/[^/]*(.*)"
+		customRe, _ = regexp.Compile(expr)
+	} else {
+		customRe = nil
 	}
 }

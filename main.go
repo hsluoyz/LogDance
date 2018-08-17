@@ -121,6 +121,8 @@ type Graph struct {
 
 func crawl(targetBase string) {
 	domain := pattern.GetDomainName(targetBase)
+	pattern.GenerateCustomRe(domain)
+
 	pageMap["/"] = newPage("/")
 	c := colly.NewCollector()
 

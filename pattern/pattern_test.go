@@ -27,13 +27,13 @@ func testGetPattern(t *testing.T, path string, res string) {
 func TestGetPattern(t *testing.T) {
 	testGetPattern(t, "/page#tag", "/page")
 	testGetPattern(t, "/page/#tag", "/page")
+
 	testGetPattern(t, "/tag/5", "/tag/*")
 	testGetPattern(t, "/page/123", "/page/*")
-	testGetPattern(t, "/author/alice", "/author/*")
-	testGetPattern(t, "/products/abc", "/products/*")
+
 	testGetPattern(t, "/query?id=123", "/query?id=*")
-	testGetPattern(t, "", "")
-	testGetPattern(t, "/lifestyle-sale/vip/gd2.html?saleType=2&channel=lifestyle&order=s_t_desc&price=0,149&sort=2", "/lifestyle-sale/vip/gd2.html?saleType=*&channel=*&order=*&price=*&sort=*")
+
+	testGetPattern(t, "/lifestyle-sale/vip/gd2.html?saleType=2&channel=lifestyle&order=s_t_desc&price=0,149&sort=2", "/lifestyle-sale/vip/gd*.html?saleType=*&channel=*&order=*&price=*&sort=*")
 }
 
 func testGetDomainName(t *testing.T, url string, res string) {
@@ -59,4 +59,12 @@ func testFormatPath(t *testing.T, url string, domain string, res string) {
 func TestFormatPath(t *testing.T) {
 	testFormatPath(t, "//www.example.com/news.aspx", "example.com", "/news.aspx")
 	testFormatPath(t, "//travel.example.com/", "example.com", "travel.example.com/")
+}
+
+func TestCustomRe(t *testing.T) {
+	keyStore["example.com"] = []string{"author", "products"}
+	GenerateCustomRe("example.com")
+
+	testGetPattern(t, "/author/alice", "/author/*")
+	testGetPattern(t, "/products/abc", "/products/*")
 }
