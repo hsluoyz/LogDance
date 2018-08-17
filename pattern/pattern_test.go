@@ -19,8 +19,6 @@ import "testing"
 func testGetPattern(t *testing.T, path string, res string) {
 	t.Helper()
 	myRes := GetPattern(path)
-	t.Logf("GetPattern(%s) = %s", path, myRes)
-
 	if myRes != res {
 		t.Errorf("GetPattern(%s) = %s, supposed to be %s", path, myRes, res)
 	}
@@ -41,8 +39,6 @@ func TestGetPattern(t *testing.T) {
 func testGetDomainName(t *testing.T, url string, res string) {
 	t.Helper()
 	myRes := GetDomainName(url)
-	t.Logf("GetDomainName(%s) = %s", url, myRes)
-
 	if myRes != res {
 		t.Errorf("GetDomainName(%s) = %s, supposed to be %s", url, myRes, res)
 	}
@@ -55,8 +51,6 @@ func TestGetDomainName(t *testing.T) {
 func testFormatPath(t *testing.T, url string, domain string, res string) {
 	t.Helper()
 	myRes := FormatPath(url, domain)
-	t.Logf("getPathFromFullUrl(%s) = %s", url, myRes)
-
 	if myRes != res {
 		t.Errorf("getPathFromFullUrl(%s) = %s, supposed to be %s", url, myRes, res)
 	}
