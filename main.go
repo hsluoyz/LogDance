@@ -15,14 +15,15 @@
 package main
 
 import (
-	"os"
 	"bufio"
+	"encoding/json"
+	"fmt"
+	"io/ioutil"
+	"os"
 	"strings"
+
 	"github.com/Songmu/axslogparser"
 	"github.com/gocolly/colly"
-	"fmt"
-	"encoding/json"
-	"io/ioutil"
 	"github.com/hsluoyz/logdance/pattern"
 )
 
@@ -58,11 +59,11 @@ func printApacheLog(l *axslogparser.Log) {
 }
 
 type Page struct {
-	name string
+	name  string
 	links map[string]int
 }
 
-var pageMap = map[string]Page {}
+var pageMap = map[string]Page{}
 
 func newPage(name string) Page {
 	p := Page{}
@@ -79,7 +80,7 @@ func (p Page) addLink(path string) {
 	}
 
 	if _, ok := p.links[path]; ok {
-		p.links[path] ++
+		p.links[path]++
 	} else {
 		p.links[path] = 1
 	}

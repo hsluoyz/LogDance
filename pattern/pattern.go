@@ -62,7 +62,7 @@ func GetSubDomain(url string, domain string) string {
 		if url == "" {
 			return ""
 		} else {
-			return url[1:len(url) - 1]
+			return url[1 : len(url)-1]
 		}
 	} else {
 		return ""
@@ -73,7 +73,7 @@ func FormatPath(url string, domain string) string {
 	if i := strings.Index(url, domain); i != -1 {
 		subDomain := GetSubDomain(url, domain)
 		if subDomain == "" || subDomain == "www" {
-			return url[i + len(domain):]
+			return url[i+len(domain):]
 		} else {
 			return strings.TrimLeft(url, "/")
 		}
