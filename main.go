@@ -25,6 +25,7 @@ import (
 	"github.com/Songmu/axslogparser"
 	"github.com/gocolly/colly"
 	"github.com/hsluoyz/logdance/pattern"
+	"github.com/hsluoyz/logdance/util"
 )
 
 func loadLogFile(filePath string, handler func(string)) error {
@@ -69,7 +70,10 @@ func newPage(name string) Page {
 	p := Page{}
 	p.name = name
 	p.links = make(map[string]int)
+
 	fmt.Println("New page: ", name)
+	util.LogPrint("New page: ", name)
+
 	return p
 }
 
