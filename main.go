@@ -23,7 +23,7 @@ import (
 	"fmt"
 	"encoding/json"
 	"io/ioutil"
-	"regexp"
+	"github.com/hsluoyz/logdance/pattern"
 )
 
 func loadLogFile(filePath string, handler func(string)) error {
@@ -119,7 +119,7 @@ type Graph struct {
 }
 
 func crawl(targetBase string) {
-	domain := GetDomainName(targetBase)
+	domain := pattern.GetDomainName(targetBase)
 	pageMap["/"] = newPage("/")
 	c := colly.NewCollector()
 
@@ -142,7 +142,7 @@ func crawl(targetBase string) {
 			}
 		}
 
-		target = FormatPath(target, domain)
+		target = pattern.FormatPath(target, domain)
 
 		if target != "/" {
 			target = strings.TrimSuffix(target, "/")
@@ -154,8 +154,8 @@ func crawl(targetBase string) {
 		}
 
 		status := "ok"
-		sPattern := GetPattern(source)
-		tPattern := GetPattern(target)
+		sPattern := pattern.GetPattern(source)
+		tPattern := pattern.GetPattern(target)
 		if sPattern == tPattern {
 			return
 		}
@@ -207,69 +207,6 @@ func generateJson() {
 		if err != nil {
 			panic(err)
 		}
-	}
-}
-
-func GetPattern(path string) string {
-	// "/page#tag" -> "/page"
-	// "/page/#tag" -> "/page"
-	re, _ := regexp.Compile("/?#.*")
-	path = re.ReplaceAllString(path, "")
-
-	//// "/author/alice" -> "/author/*"
-	//re, _ = regexp.Compile("(author/)[^/]*(.*)")
-	//path = re.ReplaceAllString(path, "$1*$2")
-	//
-	//// "/products/abc" -> "/products/*"
-	//re, _ := regexp.Compile("(products/)[^/]*(.*)")
-	//path = re.ReplaceAllString(path, "$1*$2")
-
-	// "/query?id=123" -> "/query?id=*"
-	re, _ = regexp.Compile("=[^&=]*")
-	path = re.ReplaceAllString(path, "=*")
-
-	// "/page5" -> "/page*"
-	re, _ = regexp.Compile("[0-9]+")
-	path = re.ReplaceAllString(path, "*")
-
-	// "/2018/01/02/the-blog-title" -> "/xxxx/xx/xx/xx"
-	re, _ = regexp.Compile("(.*)\\d{4}/\\d{2}/\\d{2}/(.*)")
-	path = re.ReplaceAllString(path, "$1xxxx/xx/xx/xx")
-
-	return path
-}
-
-func GetDomainName(url string) string {
-	re, _ := regexp.Compile("[^.]*\\.(com|net|org)")
-	url = re.FindString(url)
-	return url
-}
-
-func GetSubDomain(url string, domain string) string {
-	if i := strings.Index(url, domain); i != -1 {
-		url = url[:i]
-		re, _ := regexp.Compile("/[^./]*\\.")
-		url = re.FindString(url)
-		if url == "" {
-			return ""
-		} else {
-			return url[1:len(url) - 1]
-		}
-	} else {
-		return ""
-	}
-}
-
-func FormatPath(url string, domain string) string {
-	if i := strings.Index(url, domain); i != -1 {
-		subDomain := GetSubDomain(url, domain)
-		if subDomain == "" || subDomain == "www" {
-			return url[i + len(domain):]
-		} else {
-			return strings.TrimLeft(url, "/")
-		}
-	} else {
-		return url
 	}
 }
 
