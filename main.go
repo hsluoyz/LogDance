@@ -135,17 +135,21 @@ func crawl(targetBase string) {
 		source := e.Request.URL.Path
 		target := e.Attr("href")
 
-		if origin := e.Request.Ctx.Get("origin"); origin != "" {
-			source = origin
+		if e.Request.ID == 1 {
+			source = "/"
 		} else {
-			if e.Request.URL.RawQuery != "" {
-				source += "?" + e.Request.URL.RawQuery
-			}
-			if source == "" {
-				source = "/"
-			}
-			if source != "/" {
-				source = strings.TrimSuffix(source, "/")
+			if origin := e.Request.Ctx.Get("origin"); origin != "" {
+				source = origin
+			} else {
+				if e.Request.URL.RawQuery != "" {
+					source += "?" + e.Request.URL.RawQuery
+				}
+				if source == "" {
+					source = "/"
+				}
+				if source != "/" {
+					source = strings.TrimSuffix(source, "/")
+				}
 			}
 		}
 
