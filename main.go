@@ -206,7 +206,7 @@ func generateJson() {
 			g.Nodes = append(g.Nodes, newNode(page.name, 0, 10))
 		}
 
-		for target, _ := range page.links {
+		for target := range page.links {
 			g.Links = append(g.Links, newLink(page.name, target, 1))
 		}
 	}
@@ -222,8 +222,6 @@ func generateJson() {
 }
 
 func main() {
-	// GetPattern("/tag/change/page/1/")
-
 	targetBase := "http://www.ruanyifeng.com"
 
 	// loadLogFile("log/raith.log", apacheLogHandler)
