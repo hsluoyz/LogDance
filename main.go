@@ -15,49 +15,16 @@
 package main
 
 import (
-	"bufio"
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
 	"os"
 	"strings"
 
-	"github.com/Songmu/axslogparser"
 	"github.com/gocolly/colly"
 	"github.com/hsluoyz/logdance/pattern"
 	"github.com/hsluoyz/logdance/util"
 )
-
-func loadLogFile(filePath string, handler func(string)) error {
-	f, err := os.Open(filePath)
-	if err != nil {
-		return err
-	}
-	defer f.Close()
-
-	scanner := bufio.NewScanner(f)
-	for scanner.Scan() {
-		line := strings.TrimSpace(scanner.Text())
-		handler(line)
-	}
-	return scanner.Err()
-}
-
-func apacheLogHandler(line string) {
-	if line == "" {
-		return
-	}
-
-	l, err := axslogparser.Parse(line)
-	if err != nil {
-		panic(err)
-	}
-	printApacheLog(l)
-}
-
-func printApacheLog(l *axslogparser.Log) {
-	println(l.Host, l.Time.String(), l.Request, l.Status, l.Referer, l.UserAgent, l.RequestURI, l.Method)
-}
 
 type Page struct {
 	name  string
@@ -223,8 +190,6 @@ func generateJson() {
 
 func main() {
 	targetBase := "http://www.ruanyifeng.com"
-
-	// loadLogFile("log/raith.log", apacheLogHandler)
 
 	crawl(targetBase)
 	generateJson()
