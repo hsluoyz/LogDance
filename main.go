@@ -90,7 +90,7 @@ type Graph struct {
 }
 
 func printPage(name string, depth int, id uint32) {
-	fmt.Printf("%s[%d] %s\n", strings.Repeat(" ", depth), id, name)
+	fmt.Printf("%s[%d] %s\n", strings.Repeat("  ", depth), id, name)
 }
 
 func crawl(targetBase string) {
@@ -151,9 +151,10 @@ func crawl(targetBase string) {
 
 		if _, ok := pageMap[tPattern]; ok {
 			status = "already done"
+		} else {
+			pageMap[sPattern].addLink(tPattern)
+			printPage(tPattern, e.Request.Depth, e.Request.ID)
 		}
-		pageMap[sPattern].addLink(tPattern)
-		printPage(tPattern, e.Request.Depth, e.Request.ID)
 
 		// fmt.Printf("New link: [%s] --> [%s]: %s\n", sPattern, tPattern, status)
 
