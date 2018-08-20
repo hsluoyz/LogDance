@@ -103,20 +103,21 @@ func crawl(targetBase string) {
 
 	// Find and visit all links
 	c.OnHTML("a[href]", func(e *colly.HTMLElement) {
-		source := e.Request.URL.Path
+		r := e.Request
+		source := r.URL.Path
 		target := e.Attr("href")
 
-		if e.Request.ID == 1 {
+		if r.ID == 1 {
 			source = "/"
 		} else {
-			if source != e.Request.Ctx.Get("path") {
-				// println(source + " != " + e.Request.Ctx.Get("path"))
+			if source != r.Ctx.Get("path") {
+				// fmt.Printf("(%s != %s)\n", source, r.Ctx.Get("path"))
 			}
-			if origin := e.Request.Ctx.Get("pattern"); origin != "" {
+			if origin := r.Ctx.Get("pattern"); origin != "" {
 				source = origin
 			} else {
-				if e.Request.URL.RawQuery != "" {
-					source += "?" + e.Request.URL.RawQuery
+				if r.URL.RawQuery != "" {
+					source += "?" + r.URL.RawQuery
 				}
 				if source == "" {
 					source = "/"
@@ -153,15 +154,15 @@ func crawl(targetBase string) {
 			status = "already done"
 		} else {
 			pageMap[sPattern].addLink(tPattern)
-			printPage(tPattern, e.Request.Depth, e.Request.ID)
+			printPage(tPattern, r.Depth, r.ID)
 		}
 
 		// fmt.Printf("New link: [%s] --> [%s]: %s\n", sPattern, tPattern, status)
 
 		if status == "ok" {
-			e.Request.Ctx.Put("path", target)
-			e.Request.Ctx.Put("pattern", tPattern)
-			e.Request.Visit(e.Attr("href"))
+			r.Ctx.Put("path", target)
+			r.Ctx.Put("pattern", tPattern)
+			r.Visit(e.Attr("href"))
 		}
 	})
 
