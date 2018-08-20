@@ -14,5 +14,5 @@
 .idea/
 *.iml
 
-webgraph.json
+webgraph*.json
 *.log
