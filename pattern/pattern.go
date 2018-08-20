@@ -26,6 +26,7 @@ func init() {
 	keyStore = make(map[string][]string)
 
 	keyStore["yohobuy.com"] = []string{"shop", "tags"}
+	keyStore["ruanyifeng.com"] = []string{"blog"}
 }
 
 func GetPattern(path string) string {
