@@ -33,21 +33,20 @@ type Page struct {
 
 var pageMap = map[string]Page{}
 
-func newPage(name string, depth int, id uint32) Page {
+func newPage(name string) Page {
 	p := Page{}
 	p.name = name
 	p.links = make(map[string]int)
 
-	fmt.Printf("%s[%d] %s\n", strings.Repeat(" ", depth), id, name)
 	util.LogPrint("New page: ", name)
 
 	return p
 }
 
-func (p Page) addLink(path string, depth int, id uint32) {
+func (p Page) addLink(path string) {
 	_, ok := pageMap[path]
 	if !ok {
-		pageMap[path] = newPage(path, depth, id)
+		pageMap[path] = newPage(path)
 	}
 
 	if _, ok := p.links[path]; ok {
@@ -90,11 +89,16 @@ type Graph struct {
 	Links []Link `json:"links"`
 }
 
+func printPage(name string, depth int, id uint32) {
+	fmt.Printf("%s[%d] %s\n", strings.Repeat(" ", depth), id, name)
+}
+
 func crawl(targetBase string) {
 	domain := pattern.GetDomainName(targetBase)
 	pattern.GenerateCustomRe(domain)
 
-	pageMap["/"] = newPage("/", 0, 0)
+	pageMap["/"] = newPage("/")
+	printPage("/", 0, 0)
 	c := colly.NewCollector()
 
 	// Find and visit all links
@@ -105,6 +109,9 @@ func crawl(targetBase string) {
 		if e.Request.ID == 1 {
 			source = "/"
 		} else {
+			if source != e.Request.Ctx.Get("path") {
+				// println(source + " != " + e.Request.Ctx.Get("path"))
+			}
 			if origin := e.Request.Ctx.Get("pattern"); origin != "" {
 				source = origin
 			} else {
@@ -145,11 +152,13 @@ func crawl(targetBase string) {
 		if _, ok := pageMap[tPattern]; ok {
 			status = "already done"
 		}
-		pageMap[sPattern].addLink(tPattern, e.Request.Depth, e.Request.ID)
+		pageMap[sPattern].addLink(tPattern)
+		printPage(tPattern, e.Request.Depth, e.Request.ID)
 
 		// fmt.Printf("New link: [%s] --> [%s]: %s\n", sPattern, tPattern, status)
 
 		if status == "ok" {
+			e.Request.Ctx.Put("path", target)
 			e.Request.Ctx.Put("pattern", tPattern)
 			e.Request.Visit(e.Attr("href"))
 		}
