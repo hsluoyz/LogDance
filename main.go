@@ -160,7 +160,7 @@ func crawl(targetBase string) {
 		}
 
 		// Targets like "http://xxx.com", "mailto:xxx@xxx.com", "#tag" will be ignored.
-		if !strings.HasPrefix(target, "/") {
+		if target == "" || strings.HasPrefix(target, "..") || strings.HasPrefix(target, "http") || strings.HasPrefix(target, "mailto:") || strings.HasPrefix(target, "#") {
 			return
 		}
 
@@ -224,7 +224,7 @@ func generateJson() {
 func main() {
 	// GetPattern("/tag/change/page/1/")
 
-	targetBase := "https://www.yohobuy.com/"
+	targetBase := "http://www.ruanyifeng.com"
 
 	// loadLogFile("log/raith.log", apacheLogHandler)
 
