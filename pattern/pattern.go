@@ -101,9 +101,12 @@ func StripDomainName(url string, domain string) string {
 	}
 }
 
+// domain is like "/author/alice"
+// regex is like "(author)/[^/]+(.*)"
+// replaced with "$1/*$2"
 func GenerateCustomRe(domain string) {
 	if key, ok := keyStore[domain]; ok {
-		expr := "(" + key + ")/[^/]*(.*)"
+		expr := "(" + key + ")/[^/]+(.*)"
 		customRe, _ = regexp.Compile(expr)
 	} else {
 		customRe = nil

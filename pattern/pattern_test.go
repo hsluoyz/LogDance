@@ -69,7 +69,9 @@ func TestCustomRe(t *testing.T) {
 	GenerateCustomRe("example.com")
 
 	testGetPattern(t, "/author/alice", "/author/*")
+	testGetPattern(t, "/author/alice/products/1", "/author/*/products/*")
 	testGetPattern(t, "/products/abc", "/products/*")
+	testGetPattern(t, "/products/", "/products/")
 }
 
 func testGetAbsolutePath(t *testing.T, base string, path string, res string) {
