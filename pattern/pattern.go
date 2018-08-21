@@ -19,16 +19,16 @@ import (
 	"strings"
 )
 
-var keyStore map[string][]string
+var keyStore map[string]string
 var customRe *regexp.Regexp
 
 func init() {
-	keyStore = make(map[string][]string)
+	keyStore = make(map[string]string)
 
-	keyStore["toscrape.com"] = []string{"author", "tag"}
-	keyStore["github.io"] = []string{"\\d{4}/\\d{2}/\\d{2}"}
-	keyStore["yohobuy.com"] = []string{"shop", "tags"}
-	keyStore["ruanyifeng.com"] = []string{"blog"}
+	keyStore["toscrape.com"] = "author|tag"
+	keyStore["github.io"] = "\\d{4}/\\d{2}/\\d{2}"
+	keyStore["yohobuy.com"] = "shop|tags"
+	keyStore["ruanyifeng.com"] = "blog"
 }
 
 func GetPattern(path string) string {
@@ -105,8 +105,8 @@ func FormatPath(url string, domain string) string {
 }
 
 func GenerateCustomRe(domain string) {
-	if keys, ok := keyStore[domain]; ok {
-		expr := "(" + strings.Join(keys, "|") + ")/[^/]*(.*)"
+	if key, ok := keyStore[domain]; ok {
+		expr := "(" + key + ")/[^/]*(.*)"
 		customRe, _ = regexp.Compile(expr)
 	} else {
 		customRe = nil

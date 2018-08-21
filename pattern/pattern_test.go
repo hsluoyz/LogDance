@@ -65,7 +65,7 @@ func TestFormatPath(t *testing.T) {
 }
 
 func TestCustomRe(t *testing.T) {
-	keyStore["example.com"] = []string{"author", "products"}
+	keyStore["example.com"] = "author|products"
 	GenerateCustomRe("example.com")
 
 	testGetPattern(t, "/author/alice", "/author/*")
