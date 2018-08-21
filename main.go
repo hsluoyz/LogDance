@@ -80,16 +80,8 @@ func crawl(targetBase string) {
 
 		target := pattern.StripDomainName(e.Attr("href"), domain)
 
-		//if target != "/" {
-		//	target = strings.TrimSuffix(target, "/")
-		//}
-		// Enforce to add the trailing "/" for each path.
-		if !strings.HasSuffix(target, "/") {
-			target += "/"
-		}
-
 		// Targets like "http://xxx.com", "mailto:xxx@xxx.com", "#tag" will be ignored.
-		if target == "" || strings.HasPrefix(target, "..") || strings.HasPrefix(target, "http") || strings.HasPrefix(target, "mailto:") || strings.HasPrefix(target, "#") {
+		if strings.HasPrefix(target, "http") || strings.HasPrefix(target, "mailto:") || strings.HasPrefix(target, "#") {
 			return
 		}
 
@@ -101,6 +93,11 @@ func crawl(targetBase string) {
 		// Convert relative URL to site-absolute URL.
 		// e.g., "./directions/index.html/" -> "/survivor/directions/index.html/"
 		target = pattern.GetAbsolutePath(r.URL.Path, target)
+
+		// Enforce to add the trailing "/" for each path.
+		if !strings.HasSuffix(target, "/") {
+			target += "/"
+		}
 
 		status := "ok"
 		sPattern := pattern.GetPattern(source)
