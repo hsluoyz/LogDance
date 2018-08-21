@@ -55,7 +55,7 @@ func testFormatPath(t *testing.T, url string, domain string, res string) {
 	t.Helper()
 	myRes := FormatPath(url, domain)
 	if myRes != res {
-		t.Errorf("getPathFromFullUrl(%s) = %s, supposed to be %s", url, myRes, res)
+		t.Errorf("FormatPath(%s, %s) = %s, supposed to be %s", url, domain, myRes, res)
 	}
 }
 
