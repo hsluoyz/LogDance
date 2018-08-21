@@ -47,6 +47,8 @@ func testGetDomainName(t *testing.T, url string, res string) {
 
 func TestGetDomainName(t *testing.T) {
 	testGetDomainName(t, "https://www.example.com/", "example.com")
+	testGetDomainName(t, "https://custom.example.com/", "example.com")
+	testGetDomainName(t, "https://abc.github.io/", "github.io")
 }
 
 func testFormatPath(t *testing.T, url string, domain string, res string) {

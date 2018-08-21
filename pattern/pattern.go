@@ -25,6 +25,7 @@ var customRe *regexp.Regexp
 func init() {
 	keyStore = make(map[string][]string)
 
+	keyStore["toscrape.com"] = []string{"author", "tag"}
 	keyStore["yohobuy.com"] = []string{"shop", "tags"}
 	keyStore["ruanyifeng.com"] = []string{"blog"}
 }
@@ -69,7 +70,7 @@ func GetPattern(path string) string {
 }
 
 func GetDomainName(url string) string {
-	re, _ := regexp.Compile("[^.]*\\.(com|net|org)")
+	re, _ := regexp.Compile("[^.]*\\.(com|net|org|io)")
 	url = re.FindString(url)
 	return url
 }
