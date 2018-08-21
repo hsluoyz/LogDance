@@ -15,80 +15,15 @@
 package main
 
 import (
-	"encoding/json"
 	"fmt"
-	"io/ioutil"
-	"os"
 	"strings"
 
 	"github.com/gocolly/colly"
+	"github.com/hsluoyz/logdance/graph"
 	"github.com/hsluoyz/logdance/pattern"
+	"github.com/hsluoyz/logdance/render"
 	"github.com/hsluoyz/logdance/target"
-	"github.com/hsluoyz/logdance/util"
 )
-
-type Page struct {
-	name  string
-	links map[string]int
-}
-
-var pageMap = map[string]Page{}
-
-func newPage(name string) Page {
-	p := Page{}
-	p.name = name
-	p.links = make(map[string]int)
-
-	util.LogPrint("New page: ", name)
-
-	return p
-}
-
-func (p Page) addLink(path string) {
-	_, ok := pageMap[path]
-	if !ok {
-		pageMap[path] = newPage(path)
-	}
-
-	if _, ok := p.links[path]; ok {
-		p.links[path]++
-	} else {
-		p.links[path] = 1
-	}
-}
-
-type Node struct {
-	Id    string `json:"id"`
-	Group int    `json:"group"`
-	Size  int    `json:"size"`
-}
-
-type Link struct {
-	Source string `json:"source"`
-	Target string `json:"target"`
-	Value  int    `json:"value"`
-}
-
-func newNode(id string, group int, size int) Node {
-	n := Node{}
-	n.Id = id
-	n.Group = group
-	n.Size = size
-	return n
-}
-
-func newLink(source string, target string, value int) Link {
-	l := Link{}
-	l.Source = source
-	l.Target = target
-	l.Value = value
-	return l
-}
-
-type Graph struct {
-	Nodes []Node `json:"nodes"`
-	Links []Link `json:"links"`
-}
 
 func printPage(name string, depth int, id uint32, idx int) {
 	fmt.Printf("%s[%d-%d] %s\n", strings.Repeat("  ", depth), id, idx, name)
@@ -98,7 +33,7 @@ func crawl(targetBase string) {
 	domain := pattern.GetDomainName(targetBase)
 	pattern.GenerateCustomRe(domain)
 
-	pageMap["/"] = newPage("/")
+	graph.PageMap["/"] = graph.NewPage("/")
 	printPage("/", 0, 0, 0)
 	c := colly.NewCollector()
 
@@ -186,13 +121,13 @@ func crawl(targetBase string) {
 			return
 		}
 
-		if _, ok := pageMap[tPattern]; ok {
+		if _, ok := graph.PageMap[tPattern]; ok {
 			status = "already done"
 		} else {
 			printPage(tPattern, r.Depth, r.ID, idx)
 		}
 
-		pageMap[sPattern].addLink(tPattern)
+		graph.PageMap[sPattern].AddLink(tPattern)
 		// fmt.Printf("New link: [%s] --> [%s]: %s\n", sPattern, tPattern, status)
 
 		if status == "ok" {
@@ -213,34 +148,7 @@ func crawl(targetBase string) {
 	c.Visit(targetBase)
 }
 
-func generateJson() {
-	g := Graph{}
-	g.Nodes = make([]Node, 0)
-	g.Links = make([]Link, 0)
-
-	for _, page := range pageMap {
-		if page.name == "/" {
-			g.Nodes = append(g.Nodes, newNode(page.name, 0, 20))
-		} else {
-			g.Nodes = append(g.Nodes, newNode(page.name, 0, 10))
-		}
-
-		for target := range page.links {
-			g.Links = append(g.Links, newLink(page.name, target, 1))
-		}
-	}
-
-	if data, err := json.MarshalIndent(g, "", "  "); err == nil {
-		// fmt.Printf("%s\n", data)
-
-		err := ioutil.WriteFile("webgraph.json", data, os.ModePerm)
-		if err != nil {
-			panic(err)
-		}
-	}
-}
-
 func main() {
 	crawl(target.Url)
-	generateJson()
+	render.GenerateJson()
 }
