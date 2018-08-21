@@ -26,6 +26,7 @@ func init() {
 	keyStore = make(map[string][]string)
 
 	keyStore["toscrape.com"] = []string{"author", "tag"}
+	keyStore["github.io"] = []string{"\\d{4}/\\d{2}/\\d{2}"}
 	keyStore["yohobuy.com"] = []string{"shop", "tags"}
 	keyStore["ruanyifeng.com"] = []string{"blog"}
 }
