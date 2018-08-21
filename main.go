@@ -33,7 +33,7 @@ func crawl(targetBase string) {
 	domain := pattern.GetDomainName(targetBase)
 	pattern.GenerateCustomRe(domain)
 
-	graph.PageMap["/"] = graph.NewPage("/")
+	graph.AddPage("/")
 	printPage("/", 0, 0, 0)
 	c := colly.NewCollector()
 
@@ -121,13 +121,13 @@ func crawl(targetBase string) {
 			return
 		}
 
-		if _, ok := graph.PageMap[tPattern]; ok {
+		if graph.HasPage(tPattern) {
 			status = "already done"
 		} else {
 			printPage(tPattern, r.Depth, r.ID, idx)
 		}
 
-		graph.PageMap[sPattern].AddLink(tPattern)
+		graph.AddLink(sPattern, tPattern)
 		// fmt.Printf("New link: [%s] --> [%s]: %s\n", sPattern, tPattern, status)
 
 		if status == "ok" {

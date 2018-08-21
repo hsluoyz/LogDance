@@ -23,7 +23,7 @@ type Page struct {
 
 var PageMap = map[string]Page{}
 
-func NewPage(name string) Page {
+func newPage(name string) Page {
 	p := Page{}
 	p.Name = name
 	p.Links = make(map[string]int)
@@ -33,10 +33,10 @@ func NewPage(name string) Page {
 	return p
 }
 
-func (p Page) AddLink(path string) {
+func (p Page) addLink(path string) {
 	_, ok := PageMap[path]
 	if !ok {
-		PageMap[path] = NewPage(path)
+		PageMap[path] = newPage(path)
 	}
 
 	if _, ok := p.Links[path]; ok {
@@ -44,4 +44,17 @@ func (p Page) AddLink(path string) {
 	} else {
 		p.Links[path] = 1
 	}
+}
+
+func AddPage(name string) {
+	PageMap[name] = newPage(name)
+}
+
+func HasPage(name string) bool {
+	_, ok := PageMap[name]
+	return ok
+}
+
+func AddLink(sPage string, tPage string) {
+	PageMap[sPage].addLink(tPage)
 }
