@@ -89,8 +89,8 @@ type Graph struct {
 	Links []Link `json:"links"`
 }
 
-func printPage(name string, depth int, id uint32) {
-	fmt.Printf("%s[%d] %s\n", strings.Repeat("  ", depth), id, name)
+func printPage(name string, depth int, id uint32, idx int) {
+	fmt.Printf("%s[%d-%d] %s\n", strings.Repeat("  ", depth), id, idx, name)
 }
 
 func crawl(targetBase string) {
@@ -98,20 +98,34 @@ func crawl(targetBase string) {
 	pattern.GenerateCustomRe(domain)
 
 	pageMap["/"] = newPage("/")
-	printPage("/", 0, 0)
+	printPage("/", 0, 0, 0)
 	c := colly.NewCollector()
 
 	// Find and visit all links
 	c.OnHTML("a[href]", func(e *colly.HTMLElement) {
+		//fmt.Printf("a[href]: %s\n", e.Attr("href"))
+		//fmt.Printf("path: %s\n", e.Request.URL.Path)
+
 		r := e.Request
 		source := r.URL.Path
 		target := e.Attr("href")
 
+		var idx int
+		if idxAny := r.Ctx.GetAny(fmt.Sprintf("index-%d", r.ID)); idxAny == nil {
+			idx = 0
+		} else {
+			idx = idxAny.(int) + 1
+		}
+		r.Ctx.Put(fmt.Sprintf("index-%d", r.ID), idx)
+
 		if r.ID == 1 {
+			if idx == 0 && source != "/" {
+				fmt.Printf("(%s != %s)\n", source, "/")
+			}
 			source = "/"
 		} else {
-			if source != r.Ctx.Get("path") {
-				// fmt.Printf("(%s != %s)\n", source, r.Ctx.Get("path"))
+			if idx == 0 && source != r.Ctx.Get("path") {
+				fmt.Printf("(%s != %s)\n", source, r.Ctx.Get("path"))
 			}
 			if origin := r.Ctx.Get("pattern"); origin != "" {
 				source = origin
@@ -154,7 +168,7 @@ func crawl(targetBase string) {
 			status = "already done"
 		} else {
 			pageMap[sPattern].addLink(tPattern)
-			printPage(tPattern, r.Depth, r.ID)
+			printPage(tPattern, r.Depth, r.ID, idx)
 		}
 
 		// fmt.Printf("New link: [%s] --> [%s]: %s\n", sPattern, tPattern, status)
@@ -167,6 +181,11 @@ func crawl(targetBase string) {
 	})
 
 	c.OnRequest(func(r *colly.Request) {
+		//fmt.Printf("OnRequest: %s\n", r.URL.Path)
+	})
+
+	c.OnResponse(func(r *colly.Response) {
+		//fmt.Printf("OnResponse: %s\n", r.Request.URL.Path)
 	})
 
 	c.Visit(targetBase)
@@ -200,7 +219,7 @@ func generateJson() {
 }
 
 func main() {
-	targetBase := "http://www.ruanyifeng.com"
+	targetBase := "http://www.ruanyifeng.com/"
 
 	crawl(targetBase)
 	generateJson()
