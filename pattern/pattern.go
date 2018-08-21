@@ -26,7 +26,7 @@ func init() {
 	keyStore = make(map[string]string)
 
 	keyStore["toscrape.com"] = "author|tag"
-	keyStore["github.io"] = "\\d{4}/\\d{2}/\\d{2}"
+	keyStore["github.io"] = "\\d{4}/\\d{2}/\\d{2}" // "/2018/01/02/the-blog-title" -> "/*/*/*/*"
 	keyStore["yohobuy.com"] = "shop|tags"
 	keyStore["ruanyifeng.com"] = "blog"
 }
@@ -62,10 +62,6 @@ func GetPattern(path string) string {
 		re, _ = regexp.Compile("(.*/)[^./]*(.html.*)")
 		path = re.ReplaceAllString(path, "$1*$2")
 	}
-
-	// "/2018/01/02/the-blog-title" -> "/xxxx/xx/xx/xx"
-	re, _ = regexp.Compile("(.*)\\d{4}/\\d{2}/\\d{2}/(.*)")
-	path = re.ReplaceAllString(path, "$1xxxx/xx/xx/xx")
 
 	return path
 }
