@@ -81,10 +81,12 @@ func testGetAbsolutePath(t *testing.T, base string, path string, res string) {
 }
 
 func TestGetAbsolutePath(t *testing.T) {
-	testGetAbsolutePath(t, "http://example.com/directory/", "../../..//search?q=dotnet", "/search")
+	testGetAbsolutePath(t, "http://example.com/directory/", "../../..//search?q=dotnet", "/search?q=dotnet")
 	testGetAbsolutePath(t, "http://example.com/directory/", "./collapse/index.html/", "/directory/collapse/index.html/")
 	testGetAbsolutePath(t, "http://example.com/directory/", "../collapse/index.html/", "/collapse/index.html/")
 	testGetAbsolutePath(t, "https://shop.example.com/directory/", "", "/directory/")
 	testGetAbsolutePath(t, "https://shop.example.com/directory", "", "/directory")
-	testGetAbsolutePath(t, "https://shop.example.com/drectory?id=123", "", "/directory")
+	testGetAbsolutePath(t, "https://shop.example.com/directory?id=123", "", "/directory?id=123")
+	testGetAbsolutePath(t, "https://example.com/page.html#tag", "", "/page.html")
+	testGetAbsolutePath(t, "https://example.com/page.html#tag", "//http://test.com/directory", "//test.com/directory")
 }

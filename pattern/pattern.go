@@ -121,5 +121,10 @@ func GetAbsolutePath(base string, path string) string {
 		panic(err)
 	}
 
-	return b.ResolveReference(p).Path
+	res := b.ResolveReference(p)
+	if res.RawQuery == "" {
+		return res.Path
+	} else {
+		return res.Path + "?" + res.RawQuery
+	}
 }
