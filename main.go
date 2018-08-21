@@ -69,15 +69,7 @@ func crawl(targetBase string) {
 			if origin := r.Ctx.Get("pattern"); origin != "" {
 				source = origin
 			} else {
-				if r.URL.RawQuery != "" {
-					source += "?" + r.URL.RawQuery
-				}
-				if source == "" {
-					source = "/"
-				}
-				if source != "/" {
-					source = strings.TrimSuffix(source, "/")
-				}
+				panic("session pattern does not exist")
 			}
 		}
 
