@@ -146,6 +146,11 @@ func crawl(targetBase string) {
 			}
 		}
 
+		// For breakpoint based on ID and index.
+		//if r.ID == 8 && idx == 8 {
+		//	println("breakpoint here.")
+		//}
+
 		target = pattern.FormatPath(target, domain)
 
 		//if target != "/" {

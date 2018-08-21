@@ -35,7 +35,7 @@ func GetPattern(path string) string {
 	// "/page#tag" -> "/page"
 	// "/page/#tag" -> "/page"
 	re, _ := regexp.Compile("/?#.*")
-	path = re.ReplaceAllString(path, "")
+	path = re.ReplaceAllString(path, "/")
 
 	//// "/author/alice" -> "/author/*"
 	//re, _ = regexp.Compile("(author/)[^/]*(.*)")

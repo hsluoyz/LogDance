@@ -25,8 +25,8 @@ func testGetPattern(t *testing.T, path string, res string) {
 }
 
 func TestGetPattern(t *testing.T) {
-	testGetPattern(t, "/page#tag", "/page")
-	testGetPattern(t, "/page/#tag", "/page")
+	testGetPattern(t, "/page#tag", "/page/")
+	testGetPattern(t, "/page/#tag", "/page/")
 
 	testGetPattern(t, "/tag/5", "/tag/*")
 	testGetPattern(t, "/page/123", "/page/*")
