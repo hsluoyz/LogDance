@@ -166,6 +166,10 @@ func crawl(targetBase string) {
 			return
 		}
 
+		// Convert relative URL to site-absolute URL.
+		// e.g., "./directions/index.html/" -> "/survivor/directions/index.html/"
+		target = pattern.GetAbsolutePath(r.URL.Path, target)
+
 		status := "ok"
 		sPattern := pattern.GetPattern(source)
 		tPattern := pattern.GetPattern(target)
