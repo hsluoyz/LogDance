@@ -71,3 +71,20 @@ func TestCustomRe(t *testing.T) {
 	testGetPattern(t, "/author/alice", "/author/*")
 	testGetPattern(t, "/products/abc", "/products/*")
 }
+
+func testGetAbsolutePath(t *testing.T, base string, path string, res string) {
+	t.Helper()
+	myRes := GetAbsolutePath(base, path)
+	if myRes != res {
+		t.Errorf("GetAbsolutePath(%s, %s) = %s, supposed to be %s", base, path, myRes, res)
+	}
+}
+
+func TestGetAbsolutePath(t *testing.T) {
+	testGetAbsolutePath(t, "http://example.com/directory/", "../../..//search?q=dotnet", "/search")
+	testGetAbsolutePath(t, "http://example.com/directory/", "./collapse/index.html/", "/directory/collapse/index.html/")
+	testGetAbsolutePath(t, "http://example.com/directory/", "../collapse/index.html/", "/collapse/index.html/")
+	testGetAbsolutePath(t, "https://shop.example.com/directory/", "", "/directory/")
+	testGetAbsolutePath(t, "https://shop.example.com/directory", "", "/directory")
+	testGetAbsolutePath(t, "https://shop.example.com/drectory?id=123", "", "/directory")
+}

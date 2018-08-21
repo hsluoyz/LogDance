@@ -15,6 +15,7 @@
 package pattern
 
 import (
+	"net/url"
 	"regexp"
 	"strings"
 )
@@ -107,4 +108,18 @@ func GenerateCustomRe(domain string) {
 	} else {
 		customRe = nil
 	}
+}
+
+func GetAbsolutePath(base string, path string) string {
+	p, err := url.Parse(path)
+	if err != nil {
+		panic(err)
+	}
+
+	b, err := url.Parse(base)
+	if err != nil {
+		panic(err)
+	}
+
+	return b.ResolveReference(p).Path
 }
