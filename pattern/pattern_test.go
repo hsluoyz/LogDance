@@ -51,17 +51,17 @@ func TestGetDomainName(t *testing.T) {
 	testGetDomainName(t, "https://abc.github.io/", "github.io")
 }
 
-func testFormatPath(t *testing.T, url string, domain string, res string) {
+func testStripDomainName(t *testing.T, url string, domain string, res string) {
 	t.Helper()
-	myRes := FormatPath(url, domain)
+	myRes := StripDomainName(url, domain)
 	if myRes != res {
-		t.Errorf("FormatPath(%s, %s) = %s, supposed to be %s", url, domain, myRes, res)
+		t.Errorf("StripDomainName(%s, %s) = %s, supposed to be %s", url, domain, myRes, res)
 	}
 }
 
-func TestFormatPath(t *testing.T) {
-	testFormatPath(t, "//www.example.com/news.aspx", "example.com", "/news.aspx")
-	testFormatPath(t, "//travel.example.com/", "example.com", "travel.example.com/")
+func TestStripDomainName(t *testing.T) {
+	testStripDomainName(t, "//www.example.com/news.aspx", "example.com", "/news.aspx")
+	testStripDomainName(t, "//travel.example.com/", "example.com", "travel.example.com/")
 }
 
 func TestCustomRe(t *testing.T) {

@@ -88,7 +88,7 @@ func GetSubDomain(url string, domain string) string {
 	}
 }
 
-func FormatPath(url string, domain string) string {
+func StripDomainName(url string, domain string) string {
 	if i := strings.Index(url, domain); i != -1 {
 		subDomain := GetSubDomain(url, domain)
 		if subDomain == "" || subDomain == "www" {

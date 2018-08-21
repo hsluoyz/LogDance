@@ -151,7 +151,7 @@ func crawl(targetBase string) {
 		//	println("breakpoint here.")
 		//}
 
-		target = pattern.FormatPath(target, domain)
+		target = pattern.StripDomainName(target, domain)
 
 		//if target != "/" {
 		//	target = strings.TrimSuffix(target, "/")
