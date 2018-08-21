@@ -43,12 +43,12 @@ func crawl(targetBase string) {
 		//fmt.Printf("path: %s\n", e.Request.URL.Path)
 
 		r := e.Request
-		source := r.URL.Path
-		if !strings.HasSuffix(source, "/") {
-			source += "/"
+		after := r.URL.Path
+		if !strings.HasSuffix(after, "/") {
+			after += "/"
 		}
-		target := e.Attr("href")
 
+		// Get index of "a[href]".
 		var idx int
 		if idxAny := r.Ctx.GetAny(fmt.Sprintf("index-%d", r.ID)); idxAny == nil {
 			idx = 0
@@ -57,20 +57,19 @@ func crawl(targetBase string) {
 		}
 		r.Ctx.Put(fmt.Sprintf("index-%d", r.ID), idx)
 
-		if r.ID == 1 {
-			if idx == 0 && source != "/" {
-				fmt.Printf("(%s != %s)\n", source, "/")
-			}
+		// Check redirection.
+		before := r.Ctx.Get("path")
+		if before == "" {
+			before = "/"
+		}
+		if idx == 0 && before != after {
+			fmt.Printf("(%s != %s)\n", before, after)
+		}
+
+		// Get source from previous target.
+		source := r.Ctx.Get("pattern")
+		if source == "" {
 			source = "/"
-		} else {
-			if idx == 0 && source != r.Ctx.Get("path") {
-				fmt.Printf("(%s != %s)\n", source, r.Ctx.Get("path"))
-			}
-			if origin := r.Ctx.Get("pattern"); origin != "" {
-				source = origin
-			} else {
-				panic("session pattern does not exist")
-			}
 		}
 
 		// For breakpoint based on ID and index.
@@ -78,7 +77,7 @@ func crawl(targetBase string) {
 		//	println("breakpoint here.")
 		//}
 
-		target = pattern.StripDomainName(target, domain)
+		target := pattern.StripDomainName(e.Attr("href"), domain)
 
 		//if target != "/" {
 		//	target = strings.TrimSuffix(target, "/")
