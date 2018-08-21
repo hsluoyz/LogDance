@@ -50,6 +50,18 @@ func AddPage(name string) {
 	PageMap[name] = newPage(name)
 }
 
+// For redirect: "/" -> "/home.html/",
+// before = "/"
+// after = "/home.html/"
+func AddRedirectPage(before string, after string) {
+	page, ok := PageMap[before]
+	if !ok {
+		panic("\"before\" of a redirection does not exist")
+	}
+
+	PageMap[after] = page
+}
+
 func HasPage(name string) bool {
 	_, ok := PageMap[name]
 	return ok

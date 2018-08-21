@@ -40,7 +40,7 @@ func GenerateJson() {
 		}
 
 		for target := range page.Links {
-			g.Links = append(g.Links, newLink(page.Name, target, 1))
+			g.Links = append(g.Links, newLink(page.Name, graph.PageMap[target].Name, 1))
 		}
 	}
 
