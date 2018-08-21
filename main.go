@@ -175,10 +175,10 @@ func crawl(targetBase string) {
 		if _, ok := pageMap[tPattern]; ok {
 			status = "already done"
 		} else {
-			pageMap[sPattern].addLink(tPattern)
 			printPage(tPattern, r.Depth, r.ID, idx)
 		}
 
+		pageMap[sPattern].addLink(tPattern)
 		// fmt.Printf("New link: [%s] --> [%s]: %s\n", sPattern, tPattern, status)
 
 		if status == "ok" {
