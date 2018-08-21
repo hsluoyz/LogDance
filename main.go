@@ -108,6 +108,9 @@ func crawl(targetBase string) {
 
 		r := e.Request
 		source := r.URL.Path
+		if !strings.HasSuffix(source, "/") {
+			source += "/"
+		}
 		target := e.Attr("href")
 
 		var idx int
@@ -144,8 +147,12 @@ func crawl(targetBase string) {
 
 		target = pattern.FormatPath(target, domain)
 
-		if target != "/" {
-			target = strings.TrimSuffix(target, "/")
+		//if target != "/" {
+		//	target = strings.TrimSuffix(target, "/")
+		//}
+		// Enforce to add the trailing "/" for each path.
+		if !strings.HasSuffix(target, "/") {
+			target += "/"
 		}
 
 		// Targets like "http://xxx.com", "mailto:xxx@xxx.com", "#tag" will be ignored.
