@@ -166,6 +166,11 @@ func crawl(targetBase string) {
 			return
 		}
 
+		// Targets like "images/test.jpg/" will be ignored.
+		if !pattern.IsHtml(target) {
+			return
+		}
+
 		// Convert relative URL to site-absolute URL.
 		// e.g., "./directions/index.html/" -> "/survivor/directions/index.html/"
 		target = pattern.GetAbsolutePath(r.URL.Path, target)

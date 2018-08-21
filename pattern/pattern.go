@@ -128,3 +128,17 @@ func GetAbsolutePath(base string, path string) string {
 		return res.Path + "?" + res.RawQuery
 	}
 }
+
+func IsHtml(path string) bool {
+	i := strings.LastIndex(path, ".")
+	if i == -1 {
+		return true
+	} else {
+		ext := path[i+1:]
+		if strings.HasPrefix(ext, "htm") {
+			return true
+		} else {
+			return false
+		}
+	}
+}

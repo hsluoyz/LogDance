@@ -90,3 +90,19 @@ func TestGetAbsolutePath(t *testing.T) {
 	testGetAbsolutePath(t, "https://example.com/page.html#tag", "", "/page.html")
 	testGetAbsolutePath(t, "https://example.com/page.html#tag", "//http://test.com/directory", "//test.com/directory")
 }
+
+func testIsHtml(t *testing.T, path string, res bool) {
+	t.Helper()
+	myRes := IsHtml(path)
+	if myRes != res {
+		t.Errorf("IsHtml(%s) = %s, supposed to be %s", path, myRes, res)
+	}
+}
+
+func TestIsHtml(t *testing.T) {
+	testIsHtml(t, "images/test.jpg/", false)
+	testIsHtml(t, "index.html", true)
+	testIsHtml(t, "/blob/", true)
+	testIsHtml(t, "/data/123.xml", false)
+	testIsHtml(t, "/directory/page.htm", true)
+}
