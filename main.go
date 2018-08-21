@@ -43,6 +43,7 @@ func crawl(targetBase string) {
 		//fmt.Printf("path: %s\n", e.Request.URL.Path)
 
 		r := e.Request
+		href := e.Attr("href")
 		after := r.URL.Path
 		if !strings.HasSuffix(after, "/") {
 			after += "/"
@@ -78,7 +79,7 @@ func crawl(targetBase string) {
 		//	println("breakpoint here.")
 		//}
 
-		target := pattern.StripDomainName(e.Attr("href"), domain)
+		target := pattern.StripDomainName(href, domain)
 
 		// Targets like "http://xxx.com", "mailto:xxx@xxx.com", "#tag" will be ignored.
 		if strings.HasPrefix(target, "http") || strings.HasPrefix(target, "mailto:") || strings.HasPrefix(target, "#") {
@@ -122,7 +123,7 @@ func crawl(targetBase string) {
 		if status == "ok" {
 			r.Ctx.Put("path", target)
 			r.Ctx.Put("pattern", tPattern)
-			r.Visit(e.Attr("href"))
+			r.Visit(href)
 		}
 	})
 
