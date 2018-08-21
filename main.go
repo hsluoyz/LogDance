@@ -217,7 +217,7 @@ func generateJson() {
 	}
 
 	if data, err := json.MarshalIndent(g, "", "  "); err == nil {
-		fmt.Printf("%s\n", data)
+		// fmt.Printf("%s\n", data)
 
 		err := ioutil.WriteFile("webgraph.json", data, os.ModePerm)
 		if err != nil {
