@@ -23,6 +23,7 @@ import (
 
 	"github.com/gocolly/colly"
 	"github.com/hsluoyz/logdance/pattern"
+	"github.com/hsluoyz/logdance/target"
 	"github.com/hsluoyz/logdance/util"
 )
 
@@ -226,8 +227,6 @@ func generateJson() {
 }
 
 func main() {
-	targetBase := "http://www.ruanyifeng.com/"
-
-	crawl(targetBase)
+	crawl(target.Url)
 	generateJson()
 }
