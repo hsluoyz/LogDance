@@ -50,13 +50,7 @@ func crawl(targetBase string) {
 		}
 
 		// Get index of "a[href]".
-		var idx int
-		if idxAny := r.Ctx.GetAny(fmt.Sprintf("index-%d", r.ID)); idxAny == nil {
-			idx = 0
-		} else {
-			idx = idxAny.(int) + 1
-		}
-		r.Ctx.Put(fmt.Sprintf("index-%d", r.ID), idx)
+		idx := e.Index
 
 		// Check redirection.
 		before := r.Ctx.Get("path")
