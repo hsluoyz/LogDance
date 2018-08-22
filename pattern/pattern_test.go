@@ -97,7 +97,7 @@ func testIsHtml(t *testing.T, path string, res bool) {
 	t.Helper()
 	myRes := IsHtml(path)
 	if myRes != res {
-		t.Errorf("IsHtml(%s) = %s, supposed to be %s", path, myRes, res)
+		t.Errorf("IsHtml(%s) = %t, supposed to be %t", path, myRes, res)
 	}
 }
 
