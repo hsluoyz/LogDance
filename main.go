@@ -63,7 +63,7 @@ func crawl(targetBase string) {
 		}
 
 		// Get source from previous target.
-		source := r.Ctx.Get("pattern")
+		source := r.Ctx.Get(fmt.Sprintf("pattern-%d", r.Depth - 1))
 		if source == "" {
 			source = "/"
 		}
@@ -116,7 +116,7 @@ func crawl(targetBase string) {
 
 		if status == "ok" {
 			r.Ctx.Put("path", target)
-			r.Ctx.Put("pattern", tPattern)
+			r.Ctx.Put(fmt.Sprintf("pattern-%d", r.Depth), tPattern)
 			r.Visit(href)
 		}
 	})
