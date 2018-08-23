@@ -26,10 +26,10 @@ var customRe *regexp.Regexp
 func init() {
 	keyStore = make(map[string]string)
 
-	keyStore["toscrape.com"] = "author|tag"
-	keyStore["github.io"] = "\\d{4}/\\d{2}/\\d{2}" // "/2018/01/02/the-blog-title" -> "/*/*/*/*"
+	keyStore["quotes.toscrape.com"] = "author|tag"
+	keyStore["gaohaoyang.github.io"] = "\\d{4}/\\d{2}/\\d{2}" // "/2018/01/02/the-blog-title" -> "/*/*/*/*"
 	keyStore["yohobuy.com"] = "shop|tags"
-	keyStore["ruanyifeng.com"] = "blog|survivor|road"
+	keyStore["www.ruanyifeng.com"] = "blog|survivor|road"
 }
 
 func GetPattern(path string) string {
@@ -129,8 +129,8 @@ func StripDomainName(url string, domain string) string {
 // domain is like "/author/alice"
 // regex is like "(author)/[^/]+(.*)"
 // replaced with "$1/*$2"
-func GenerateCustomRe(domain string) {
-	if key, ok := keyStore[domain]; ok {
+func GenerateCustomRe(fullDomain string) {
+	if key, ok := keyStore[fullDomain]; ok {
 		expr := "(" + key + ")/[^/]+(.*)"
 		customRe, _ = regexp.Compile(expr)
 	} else {

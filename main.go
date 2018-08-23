@@ -30,8 +30,9 @@ func printPage(name string, depth int, id uint32, idx int) {
 }
 
 func crawl(targetBase string) {
+	fullDomain := pattern.GetFullDomainName(targetBase)
 	domain := pattern.GetDomainName(targetBase)
-	pattern.GenerateCustomRe(domain)
+	pattern.GenerateCustomRe(fullDomain)
 
 	graph.AddPage("/")
 	printPage("/", 0, 0, 0)
