@@ -87,6 +87,13 @@ func TestCustomRe(t *testing.T) {
 	testGetPattern(t, "/author/alice/products/1", "/author/*/products/*")
 	testGetPattern(t, "/products/abc", "/products/*")
 	testGetPattern(t, "/products/", "/products/")
+
+	testGetPattern(t, "/author/alice/products/1", "/author/*/products/*")
+
+	keyStore["example.com"] = []string{"books", "catalogue"}
+	GenerateCustomRe("example.com")
+
+	testGetPattern(t, "/catalogue/category/books/travel_2/index.html/", "/catalogue/*/books/*/*.html/")
 }
 
 func testGetAbsolutePath(t *testing.T, base string, path string, res string) {

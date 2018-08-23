@@ -30,6 +30,7 @@ func init() {
 	keyStore["gaohaoyang.github.io"] = []string{"\\d{4}/\\d{2}/\\d{2}"} // "/2018/01/02/the-blog-title" -> "/*/*/*/*"
 	keyStore["yohobuy.com"] = []string{"shop|tags"}
 	keyStore["www.ruanyifeng.com"] = []string{"blog|survivor|road"}
+	keyStore["books.toscrape.com"] = []string{"books", "catalogue"}
 }
 
 func GetPattern(path string) string {
