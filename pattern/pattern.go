@@ -67,10 +67,35 @@ func GetPattern(path string) string {
 	return path
 }
 
+func GetFullDomainName(url string) string {
+	i := strings.Index(url, "//")
+	if i == -1 {
+		panic("GetDomainName() error: no \"//\" in url")
+	}
+	i += 2
+
+	j := len(url)
+	if url[len(url) - 1] == '/' {
+		j --
+	}
+
+	return url[i:j]
+}
+
 func GetDomainName(url string) string {
-	re, _ := regexp.Compile("[^.]*\\.(com|net|org|io)")
-	url = re.FindString(url)
-	return url
+	full := GetFullDomainName(url)
+
+	i := strings.LastIndex(full, ".")
+	if i == -1 {
+		panic("GetDomainName() error: no \".\" in url")
+	}
+
+	j := strings.LastIndex(full[:i], ".")
+	if j == -1 {
+		return full
+	} else {
+		return full[j+1:]
+	}
 }
 
 func GetSubDomain(url string, domain string) string {

@@ -37,6 +37,20 @@ func TestGetPattern(t *testing.T) {
 	testGetPattern(t, "/lifestyle-sale/vip/bd1-gd2.html", "/lifestyle-sale/vip/*.html")
 }
 
+func testGetFullDomainName(t *testing.T, url string, res string) {
+	t.Helper()
+	myRes := GetFullDomainName(url)
+	if myRes != res {
+		t.Errorf("GetFullDomainName(%s) = %s, supposed to be %s", url, myRes, res)
+	}
+}
+
+func TestGetFullDomainName(t *testing.T) {
+	testGetFullDomainName(t, "https://www.example.com/", "www.example.com")
+	testGetFullDomainName(t, "https://custom.example.com/", "custom.example.com")
+	testGetFullDomainName(t, "https://abc.github.io/", "abc.github.io")
+}
+
 func testGetDomainName(t *testing.T, url string, res string) {
 	t.Helper()
 	myRes := GetDomainName(url)
@@ -49,6 +63,7 @@ func TestGetDomainName(t *testing.T) {
 	testGetDomainName(t, "https://www.example.com/", "example.com")
 	testGetDomainName(t, "https://custom.example.com/", "example.com")
 	testGetDomainName(t, "https://abc.github.io/", "github.io")
+	testGetDomainName(t, "http://test.net/", "test.net")
 }
 
 func testStripDomainName(t *testing.T, url string, domain string, res string) {
