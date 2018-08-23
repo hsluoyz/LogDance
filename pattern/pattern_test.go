@@ -80,7 +80,7 @@ func TestStripDomainName(t *testing.T) {
 }
 
 func TestCustomRe(t *testing.T) {
-	keyStore["example.com"] = "author|products"
+	keyStore["example.com"] = []string{"author|products"}
 	GenerateCustomRe("example.com")
 
 	testGetPattern(t, "/author/alice", "/author/*")

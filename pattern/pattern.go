@@ -20,16 +20,16 @@ import (
 	"strings"
 )
 
-var keyStore map[string]string
-var customRe *regexp.Regexp
+var keyStore map[string][]string
+var customRe []*regexp.Regexp
 
 func init() {
-	keyStore = make(map[string]string)
+	keyStore = make(map[string][]string)
 
-	keyStore["quotes.toscrape.com"] = "author|tag"
-	keyStore["gaohaoyang.github.io"] = "\\d{4}/\\d{2}/\\d{2}" // "/2018/01/02/the-blog-title" -> "/*/*/*/*"
-	keyStore["yohobuy.com"] = "shop|tags"
-	keyStore["www.ruanyifeng.com"] = "blog|survivor|road"
+	keyStore["quotes.toscrape.com"] = []string{"author|tag"}
+	keyStore["gaohaoyang.github.io"] = []string{"\\d{4}/\\d{2}/\\d{2}"} // "/2018/01/02/the-blog-title" -> "/*/*/*/*"
+	keyStore["yohobuy.com"] = []string{"shop|tags"}
+	keyStore["www.ruanyifeng.com"] = []string{"blog|survivor|road"}
 }
 
 func GetPattern(path string) string {
@@ -46,8 +46,8 @@ func GetPattern(path string) string {
 	//re, _ := regexp.Compile("(products/)[^/]*(.*)")
 	//path = re.ReplaceAllString(path, "$1*$2")
 
-	if customRe != nil {
-		path = customRe.ReplaceAllString(path, "$1/*$2")
+	for _, re := range customRe {
+		path = re.ReplaceAllString(path, "$1/*$2")
 	}
 
 	// "/query?id=123" -> "/query?id=*"
@@ -130,9 +130,12 @@ func StripDomainName(url string, domain string) string {
 // regex is like "(author)/[^/]+(.*)"
 // replaced with "$1/*$2"
 func GenerateCustomRe(fullDomain string) {
-	if key, ok := keyStore[fullDomain]; ok {
-		expr := "(" + key + ")/[^/]+(.*)"
-		customRe, _ = regexp.Compile(expr)
+	if keys, ok := keyStore[fullDomain]; ok {
+		for _, key := range keys {
+			expr := "(" + key + ")/[^/]+(.*)"
+			re, _ := regexp.Compile(expr)
+			customRe = append(customRe, re)
+		}
 	} else {
 		customRe = nil
 	}
