@@ -59,6 +59,14 @@ func AddRedirectPage(before string, after string) {
 		panic("\"before\" of a redirection does not exist")
 	}
 
+	// Maybe:
+	// before = "/home.html/"
+	// after = "/"
+	// So we use the shorter one from before and after as the final name.
+	if len(after) < len(before) {
+		page.Name = after
+	}
+
 	PageMap[after] = page
 }
 
