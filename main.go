@@ -65,7 +65,7 @@ func crawl(targetBase string) {
 		}
 		if idx == 0 && before != after {
 			fmt.Printf("(%s != %s)\n", before, after)
-			graph.AddRedirectPage(before, after)
+			graph.AddRedirectPage(pattern.GetPattern(before), pattern.GetPattern(after))
 		}
 
 		// Get source from previous target.
