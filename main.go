@@ -130,7 +130,10 @@ func crawl(targetBase string) {
 		//fmt.Printf("OnResponse: %s\n", r.Request.URL.Path)
 	})
 
-	c.Visit(targetBase)
+	err := c.Visit(targetBase)
+	if err != nil {
+		panic(err)
+	}
 }
 
 func main() {
