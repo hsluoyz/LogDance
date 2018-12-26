@@ -84,9 +84,9 @@ func crawl(targetBase string) {
 		}
 
 		// Targets like "images/test.jpg/" will be ignored.
-		if !pattern.IsHtml(target) {
-			return
-		}
+		//if !pattern.IsHtml(target) {
+		//	return
+		//}
 
 		// Convert relative URL to site-absolute URL.
 		// e.g., "./directions/index.html/" -> "/survivor/directions/index.html/"
