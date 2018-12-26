@@ -48,6 +48,9 @@ func crawl(targetBase string) {
 		r := e.Request
 		href := e.Attr("href")
 		after := r.URL.Path
+		if r.URL.RawQuery != "" {
+			after = strings.TrimRight(r.URL.Path, "/") + "?" + r.URL.RawQuery
+		}
 		if !strings.HasSuffix(after, "/") {
 			after += "/"
 		}
