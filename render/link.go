@@ -15,15 +15,13 @@
 package render
 
 type Link struct {
-	Source string `json:"source"`
-	Target string `json:"target"`
-	Value  int    `json:"value"`
+	Source int `json:"source"`
+	Target int `json:"target"`
 }
 
-func newLink(source string, target string, value int) Link {
+func newLink(source int, target int) Link {
 	l := Link{}
 	l.Source = source
 	l.Target = target
-	l.Value = value
 	return l
 }

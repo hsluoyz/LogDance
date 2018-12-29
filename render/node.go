@@ -15,15 +15,15 @@
 package render
 
 type Node struct {
-	Id    string `json:"id"`
-	Group int    `json:"group"`
-	Size  int    `json:"size"`
+	Id       int    `json:"id"`
+	Name     string `json:"name"`
+	Category string `json:"category"`
 }
 
-func newNode(id string, group int, size int) Node {
+func newNode(id int, name string, category string) Node {
 	n := Node{}
 	n.Id = id
-	n.Group = group
-	n.Size = size
+	n.Name = name
+	n.Category = category
 	return n
 }

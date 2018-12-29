@@ -17,20 +17,21 @@ package graph
 import "github.com/hsluoyz/logdance/util"
 
 type Page struct {
+	Id    int
 	Name  string
 	Links map[string]int
 }
 
-var PageMap = map[string]Page{}
+var PageMap = map[string]*Page{}
 
-func newPage(name string) Page {
+func newPage(name string) *Page {
 	p := Page{}
 	p.Name = name
 	p.Links = make(map[string]int)
 
 	util.LogPrint("New page: ", name)
 
-	return p
+	return &p
 }
 
 func (p Page) addLink(path string) {

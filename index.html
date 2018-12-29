@@ -66,8 +66,13 @@
             .enter().append("g")
 
         var circles = node.append("circle")
-            .attr("r", function(d) { return d.size; })
-            .attr("fill", function(d) { return color(d.group); })
+            .attr("r", function(d) {
+                if (d.category === 'page')
+                    return 10;
+                else
+                    return 30;
+            })
+            .attr("fill", function(d) { return color(0); })
             .call(d3.drag()
                 .on("start", dragstarted)
                 .on("drag", dragged)
@@ -75,14 +80,14 @@
 
         var lables = node.append("text")
             .text(function(d) {
-                return d.id;
+                return d.name;
             })
             .attr('x', 15)
             .attr('y', 15)
             .style("font-size", "13px");
 
         node.append("title")
-            .text(function(d) { return d.id; });
+            .text(function(d) { return d.name; });
 
         simulation
             .nodes(graph.nodes)
