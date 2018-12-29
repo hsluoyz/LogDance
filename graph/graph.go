@@ -17,41 +17,47 @@ package graph
 import "github.com/hsluoyz/logdance/util"
 
 type Page struct {
-	Id    int
-	Name  string
-	Links map[string]int
+	Id      int         `json:"nodes"`
+	Name    string      `json:"nodes"`
+	Aliases []string    `json:"nodes"`
+	Links   map[int]int `json:"nodes"`
 }
 
 var PageList = []*Page{}
 var PageMap = map[string]*Page{}
 
-func newPage(name string) *Page {
+func newPage(id int, name string) *Page {
 	p := Page{}
+	p.Id = id
 	p.Name = name
-	p.Links = make(map[string]int)
+	p.Links = make(map[int]int)
 
 	util.LogPrint("New page: ", name)
 
 	return &p
 }
 
-func (p Page) addLink(path string) {
-	_, ok := PageMap[path]
+func (p *Page) addAlias(name string) {
+	p.Aliases = append(p.Aliases, name)
+}
+
+func (p *Page) addLink(path string) {
+	target, ok := PageMap[path]
 	if !ok {
-		newPage := newPage(path)
-		PageList = append(PageList, newPage)
-		PageMap[path] = newPage
+		target = newPage(len(PageList), path)
+		PageList = append(PageList, target)
+		PageMap[path] = target
 	}
 
-	if _, ok := p.Links[path]; ok {
-		p.Links[path]++
+	if _, ok := p.Links[target.Id]; ok {
+		p.Links[target.Id]++
 	} else {
-		p.Links[path] = 1
+		p.Links[target.Id] = 1
 	}
 }
 
 func AddPage(name string) {
-	newPage := newPage(name)
+	newPage := newPage(len(PageList), name)
 	PageList = append(PageList, newPage)
 	PageMap[name] = newPage
 }
@@ -65,15 +71,25 @@ func AddRedirectPage(before string, after string) {
 		panic("\"before\" of a redirection does not exist")
 	}
 
-	// Maybe:
-	// before = "/home.html/"
-	// after = "/"
-	// So we use the shorter one from before and after as the final name.
-	if len(after) < len(before) {
-		page.Name = after
-	}
+	afterPage, ok := PageMap[after]
+	if !ok {
+		// Maybe:
+		// before = "/home.html/"
+		// after = "/"
+		// So we use the shorter one from before and after as the final name.
+		if len(after) < len(before) {
+			page.Name = after
+		}
 
-	PageMap[after] = page
+		page.addAlias(after)
+		PageMap[after] = page
+	} else {
+		i := page.Id
+		// Delete the before page (i-th) because the after page already exists.
+		PageList = append(PageList[: i], PageList[i + 1 :]...)
+		afterPage.addAlias(before)
+		PageMap[before] = page
+	}
 }
 
 func HasPage(name string) bool {
