@@ -22,6 +22,7 @@ type Page struct {
 	Links map[string]int
 }
 
+var PageList = []*Page{}
 var PageMap = map[string]*Page{}
 
 func newPage(name string) *Page {
@@ -37,7 +38,9 @@ func newPage(name string) *Page {
 func (p Page) addLink(path string) {
 	_, ok := PageMap[path]
 	if !ok {
-		PageMap[path] = newPage(path)
+		newPage := newPage(path)
+		PageList = append(PageList, newPage)
+		PageMap[path] = newPage
 	}
 
 	if _, ok := p.Links[path]; ok {
@@ -48,7 +51,9 @@ func (p Page) addLink(path string) {
 }
 
 func AddPage(name string) {
-	PageMap[name] = newPage(name)
+	newPage := newPage(name)
+	PageList = append(PageList, newPage)
+	PageMap[name] = newPage
 }
 
 // For redirect: "/" -> "/home.html/",

@@ -32,13 +32,11 @@ func GenerateJson() {
 	g.Nodes = make([]Node, 0)
 	g.Links = make([]Link, 0)
 
-	i := 0
-	for _, page := range graph.PageMap {
+	for i, page := range graph.PageList {
 		page.Id = i
-		i += 1
 	}
 
-	for _, page := range graph.PageMap {
+	for _, page := range graph.PageList {
 		if page.Name == "/" {
 			g.Nodes = append(g.Nodes, newNode(page.Id, page.Name, "home"))
 		} else {
